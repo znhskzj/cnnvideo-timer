@@ -29,8 +29,8 @@ class MetadataManager:
                 data = json.load(f)
 
             # 打印检索到的元数据
-            print(f"Retrieved metadata for video {metadata['title']}:")
-            print(json.dumps(metadata, indent=4, sort_keys=True))  # 以格式化的JSON格式打印
+            # print(f"Retrieved metadata for video {metadata['title']}:")
+            # print(json.dumps(metadata, indent=4, sort_keys=True))  # 以格式化的JSON格式打印
 
             # Check if the video with the same ID already exists in the metadata.
             existing_metadata = [item for item in data if item['id'] == metadata['id']]
