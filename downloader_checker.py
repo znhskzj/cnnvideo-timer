@@ -1,9 +1,12 @@
-# downloader_checker.py v2.2.1
-# - Enhanced error handling in the check_and_download method.
+# downloader_checker.py v2.3.1
+
+# This script is responsible for checking the availability of new videos and managing their download process. It utilizes the video_downloader module to perform the actual download, and it ensures that each video is only downloaded once by checking against a record of previously downloaded videos.
 
 import time
 import os
 import logging
+import random  # Importing random to introduce randomness in retry intervals
+from typing import Any, Optional
 from utils import sanitize_filename
 from config_loader import load_config
 from metadata_manager import MetadataManager
@@ -15,10 +18,10 @@ config = load_config()
 
 class DownloaderManager:
 
-    def __init__(self, videos, downloader):
+    def __init__(self, videos, downloader, config):
         self.videos = videos
         self.downloader = downloader
-        self.metadata_manager = MetadataManager()  # 创建MetadataManager的实例
+        self.metadata_manager = MetadataManager(config)  # 创建MetadataManager的实例，并传递配置
 
     def should_download(self, video_info):
         """Determine if a video should be downloaded based on its title and metadata."""
@@ -52,34 +55,48 @@ class DownloaderManager:
 
     def check_and_download(self):
         downloaded_count = 0
-        downloaded_titles = []  # 新增：存储已下载视频的标题
-        print(f"Preparing to download {len(self.videos)} videos...")
+        downloaded_titles = []  
+
         logger.info(f"Preparing to download {len(self.videos)} videos...")
 
         for video_url in self.videos:
-            retries = 0
-            while retries < config["MAX_DOWNLOAD_RETRIES"]:
-                try:
-                    video_info = self.downloader.get_video_info(video_url)
+            try:
+                downloaded_title = self._download_single_video(video_url)  # Simplified download logic
+                if downloaded_title:
+                    downloaded_titles.append(downloaded_title)
+                    downloaded_count += 1
+            except Exception as e:
+                logger.error(f"Failed to download video from {video_url}. Error: {e}.", exc_info=True)  # Logging more error info
 
-                    if self.should_download(video_info):
-                        print(f"Downloading: {video_info['title']}")
-                        self.downloader.download_video(video_url)
-                        self.store_video_metadata(video_info)
-                        logger.info(f"Successfully downloaded {video_info['title']}.")
-                        downloaded_count += 1
-                        downloaded_titles.append(video_info['title'])  # 新增：将标题添加到列表
-                        break  # Once successfully downloaded, break out of the retry loop
-                    else:
-                        sanitized_title = sanitize_filename(video_info['title'])
-                        print(f"Video {sanitized_title} already exists. Skipping download.")
-                        logger.info(f"Video {sanitized_title} already exists. Skipping download.")
-                        break  # Video already exists, so no need to retry
-                except Exception as e:
-                    logger.error(f"Error downloading video from {video_url}. Error: {e}.")
-                    retries += 1
-                    if retries >= config["MAX_DOWNLOAD_RETRIES"]:
-                        raise e
-                    time.sleep((retries + 1) * 5)
+        return downloaded_titles, downloaded_count
+    
+    def _download_single_video(self, video_url: str) -> Optional[str]:
+        """Try downloading a single video and return the title if successful."""
+        retries = 0
+        max_retries = config.get("MAX_DOWNLOAD_RETRIES", 3)  # Getting the value from config with a default
 
-        return downloaded_titles, downloaded_count  # 修改：返回已下载视频的标题和数量
+        while retries < max_retries:
+            try:
+                video_info = self.downloader.get_video_info(video_url)
+
+                if self.should_download(video_info):
+                    print(f"Downloading: {video_info['title']}")
+                    self.downloader.download_video(video_url)
+                    self.store_video_metadata(video_info)
+                    logger.info(f"Successfully downloaded {video_info['title']}.")
+                    return video_info['title']  # Return the title of the downloaded video
+
+                sanitized_title = sanitize_filename(video_info['title'])
+                print(f"Video {sanitized_title} already exists. Skipping download.")
+                logger.info(f"Video {sanitized_title} already exists. Skipping download.")
+                return None  # Return None if the video was not downloaded
+
+            except Exception as e:
+                logger.error(f"Error downloading video from {video_url}. Error: {e}. Retrying...")
+                retries += 1
+                if retries >= max_retries:
+                    logger.error(f"Failed to download video from {video_url} after {retries} retries.")
+                    return None  # Return None if the download failed after retries
+
+                sleep_time = (retries + 1) * 5 + random.randint(1, 5)  # Adding randomness to the sleep time
+                time.sleep(sleep_time)  # Exponential backoff with randomness

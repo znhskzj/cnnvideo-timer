@@ -1,22 +1,41 @@
-# link_extractor.py v1.1.0
+# link_extractor.py v1.2.1
+
+# This script is dedicated to extracting video links from a webpage. It parses the webpage to identify and retrieve URLs of the target videos, preparing them for the subsequent download process.
+
+# link_extractor.py v1.3.0
 
 import requests
 import re
 import logging
+from config_loader import load_config
 
 logger = logging.getLogger('link_extractor')
+
+config = load_config()
 
 class VideoLinkExtractor:
     
     @staticmethod
-    def extract_video_links_from_page(url, max_links=None, video_pattern=None, base_url=None):
-        if max_links is None or video_pattern is None or base_url is None:
-            # 您可以在这里抛出异常，或者使用默认值。这里为了简洁，我选择了抛出异常。
-            raise ValueError("Necessary parameters are missing!")
-        
+    def extract_video_links_from_page(url: str = config["YOUTUBE_URL"], max_links: int = config["MAX_VIDEOS_TO_DOWNLOAD"], 
+                                      video_pattern: str = config["YOUTUBE_VIDEO_PATTERN"], base_url: str = config["YOUTUBE_BASE_URL"], 
+                                      timeout: int = config.get("REQUEST_TIMEOUT", 10)) -> list:
+        """
+        Extract video links from a webpage.
+
+        Parameters:
+        - url: The webpage URL to extract video links from.
+        - max_links: Maximum number of video links to return.
+        - video_pattern: Regular expression pattern to match video links.
+        - base_url: Base URL to construct full video URLs.
+        - timeout: Request timeout.
+
+        Returns:
+        - A list of video URLs.
+        """
+        print(f"Timeout value: {timeout}, Type: {type(timeout)}")  # Debug line
         try:
-            response = requests.get(url, timeout=10)  # 10秒的超时限制
-            response.raise_for_status()  # 这会引发HTTPError，如果返回的是一个不成功的状态码
+            response = requests.get(url, timeout=timeout)  # Using timeout from config
+            response.raise_for_status()  
 
             video_links = re.findall(video_pattern, response.text)
             full_links = [f'{base_url}/watch?v={link}' for link in video_links]
@@ -29,16 +48,7 @@ class VideoLinkExtractor:
         
         return []
 
-# 当您实际使用这个方法时，从 config 中获取所需的值：
+# Usage example
 if __name__ == '__main__':
-    from config_loader import load_config
-
-    config = load_config()
-    url = "YOUR_URL_HERE"
-    links = VideoLinkExtractor.extract_video_links_from_page(
-        url, 
-        max_links=config["MAX_VIDEOS_TO_DOWNLOAD"],
-        video_pattern=config["YOUTUBE_VIDEO_PATTERN"],
-        base_url=config["YOUTUBE_BASE_URL"]
-    )
+    links = VideoLinkExtractor.extract_video_links_from_page()
     print(links)

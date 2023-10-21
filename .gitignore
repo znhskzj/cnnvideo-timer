@@ -1,2 +1,10 @@
+# gitignore v1.0.0
+# 排除文件和目录
+# 20231020 增加排除当前目录下的videos,log,bin,tmp目录
 *.env
 *.log
+*.mp4
+/videos/
+/log/
+/bin/
+/tmp/

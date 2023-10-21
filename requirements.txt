@@ -1,0 +1,4 @@
+apscheduler
+dotenv
+requests
+yt_dlp

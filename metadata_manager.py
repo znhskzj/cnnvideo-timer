@@ -1,45 +1,42 @@
-# metadata_manager.py v1.1.0
+# metadata_manager.py v1.2.0
+
 # Description: Manages the storage, retrieval, and querying of video metadata.
 
 import json
 import os
 import logging
+from typing import Optional
 
 logger = logging.getLogger('metadata_manager')
 
 class MetadataManager:
 
-    def __init__(self, metadata_file="log/metadata.json"):
-        self.metadata_file = metadata_file
-        # 如果文件不存在，创建一个空的
-        if not os.path.exists(metadata_file):
-            os.makedirs(os.path.dirname(metadata_file), exist_ok=True)  # Ensure the directory exists
-            try:
-                with open(metadata_file, 'w') as f:
-                    json.dump([], f)
-                    # json.dump({}, f)
-            except Exception as e:
-                logger.error(f"Error initializing metadata file: {e}")
-                raise e
-            
-    def save_or_update_metadata(self, metadata):
-        """保存或更新视频的元数据到文件中。"""
+    def __init__(self, config):
+        """Initialize the MetadataManager with a specific metadata file."""
+        self.metadata_file = config["METADATA_FILE"]
+        if not os.path.exists(self.metadata_file):
+            os.makedirs(os.path.dirname(self.metadata_file), exist_ok=True)
+            self._initialize_metadata_file()
+
+    def _initialize_metadata_file(self):
+        """Initialize an empty metadata file."""
         try:
-            with open(self.metadata_file, 'r') as f:
-                data = json.load(f)
+            with open(self.metadata_file, 'w') as f:
+                json.dump([], f)
+        except Exception as e:
+            logger.error(f"Error initializing metadata file: {e}")
+            raise
 
-            # 打印检索到的元数据
-            # print(f"Retrieved metadata for video {metadata['title']}:")
-            # print(json.dumps(metadata, indent=4, sort_keys=True))  # 以格式化的JSON格式打印
+    def save_or_update_metadata(self, metadata: dict):
+        """Save or update a video's metadata in the metadata file."""
+        try:
+            data = self.get_all_metadata()
 
-            # Check if the video with the same ID already exists in the metadata.
             existing_metadata = [item for item in data if item['id'] == metadata['id']]
             if existing_metadata:
-                # If the video with the same ID exists, update its metadata.
                 index = data.index(existing_metadata[0])
                 data[index] = metadata
             else:
-                # If not, append the new metadata.
                 data.append(metadata)
 
             with open(self.metadata_file, 'w') as f:
@@ -49,27 +46,25 @@ class MetadataManager:
 
         except Exception as e:
             logger.error(f"Error saving/updating metadata for video {metadata['title']}: {e}")
-            raise e
-        
-    def get_all_metadata(self):
+            raise
+
+    def get_all_metadata(self) -> list:
         """Retrieve all video metadata from the metadata file."""
         try:
             with open(self.metadata_file, "r") as f:
                 return json.load(f)
         except Exception as e:
             logger.error(f"Error retrieving all metadata: {e}")
-            raise e
-        
-    def query_metadata(self, video_id):
-        """根据视频ID查询元数据"""
+            raise
+
+    def query_metadata(self, video_id: str) -> Optional[dict]:
+        """Query metadata based on a video ID."""
         try:
-            with open(self.metadata_file, 'r') as f:
-                data = json.load(f)
-            
+            data = self.get_all_metadata()
             for item in data:
                 if item['id'] == video_id:
                     return item
-            return None  # 如果没有找到对应的元数据
+            return None
         except Exception as e:
             logger.error(f"Error querying metadata for video ID {video_id}: {e}")
-            raise e
+            raise
