@@ -1,17 +1,51 @@
+#!/bin/bash
+
+# File: deploy.sh
+# Version: 1.1.0
+# Description: This script automates the deployment process of the cnnvideo-timer application. 
+# It clones the repository, sets up a virtual environment, installs necessary packages, 
+# and schedules the application to run daily.
 
 #!/bin/bash
 
-# Clone the repository
-git clone https://github.com/znhskzj/cnnvideo-timer.git
+function clone_repo {
+    if [ ! -d "cnnvideo-timer" ]; then
+        git clone https://github.com/znhskzj/cnnvideo-timer.git
+    else
+        echo "Directory cnnvideo-timer already exists. Skipping cloning."
+    fi
+}
 
-# Change to the project directory
-cd cnnvideo-timer
+function setup_venv {
+    if [ ! -d "venv" ]; then
+        python3 -m venv venv
+    else
+        echo "Virtual environment already exists. Skipping creation."
+    fi
+}
 
-# Install required packages
-pip3 install -r requirements.txt
+function install_requirements {
+    source venv/bin/activate
+    pip3 install -r requirements.txt
+    if [ $? -ne 0 ]; then
+        echo "Failed to install required packages."
+        exit 1
+    fi
+}
 
-# Make the scheduler.py executable
-chmod +x scheduler.py
+function setup_cron {
+    (crontab -l 2>/dev/null; echo "0 0 * * * cd $(pwd) && ./venv/bin/python3 scheduler.py >> cron.log 2>&1") | crontab -
+    if [ $? -ne 0 ]; then
+        echo "Failed to update crontab."
+        exit 1
+    fi
+}
 
-# Add the scheduler.py to the crontab for daily execution
-(crontab -l 2>/dev/null; echo "0 0 * * * cd $(pwd) && ./scheduler.py") | crontab -
+# Main script execution
+clone_repo
+cd cnnvideo-timer || exit
+setup_venv
+install_requirements
+setup_cron
+
+echo "Setup completed successfully."

@@ -17,6 +17,7 @@ logger = logging.getLogger('notifier')
 class Notifier:
 
     def __init__(self):
+        """Initialize the Notifier with configuration loaded from the environment file."""
         self.config = load_config()
         self.retry_count = self.config.get("EMAIL_RETRY_COUNT", 3)  # Load retry count from config or use default
 
@@ -24,7 +25,11 @@ class Notifier:
         self.recipients = [email.strip() for email in self.config["SMTP_RECEIVER"].split(',')]
 
     def send_notification(self, downloaded_videos):
-        """Send an email notification with the titles and sizes of downloaded videos."""
+        """Send an email notification with the titles and sizes of downloaded videos.
+        Parameters:
+        - downloaded_videos : list : A list of paths to the downloaded videos.
+        """
+
         message_body = ""
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         

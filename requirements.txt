@@ -1,4 +1,4 @@
 apscheduler==3.10.4
-dotenv==1.0.0
+python-dotenv==1.0.0
 requests==2.31.0
 yt_dlp==2023.10.7

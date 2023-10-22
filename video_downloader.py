@@ -26,7 +26,10 @@ logger = logging.getLogger('video_downloader')
 
 class YTDownloader:
     def __init__(self, output_directory=None):
-        """Initialize the YTDownloader with an output directory."""
+        """Initialize the YTDownloader with an output directory.
+        Parameters:
+        - output_directory : str : The directory where the downloaded videos will be saved.
+        """
         if not output_directory:
             output_directory = config["DOWNLOAD_PATH"]
         self.output_directory = output_directory
@@ -52,7 +55,15 @@ class YTDownloader:
         return self.ydl.extract_info(video_url, download=False)
 
     def download_video(self, video_url):
-        """Download the video and save it to the specified directory."""
+        """Download the video and save it to the specified directory.
+        
+        Parameters:
+        - video_url : str : The URL of the video to be downloaded.
+        
+        Returns:
+        -  
+        
+        """
         info = self.ydl.extract_info(video_url, download=False)
         clean_title = sanitize_filename(info['title'])
         self.ydl_opts['outtmpl'] = os.path.join(self.output_directory, clean_title + '.%(ext)s')

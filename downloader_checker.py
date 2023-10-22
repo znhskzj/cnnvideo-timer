@@ -19,12 +19,26 @@ config = load_config()
 class DownloaderManager:
 
     def __init__(self, videos, downloader, config):
+        """Initialize the DownloaderManager with videos to be downloaded, a downloader, and configuration.
+        
+        Parameters:
+        - videos : list : A list of video information to be downloaded.
+        - downloader : YTDownloader : An instance of YTDownloader to perform the actual download.
+        - config : dict : Configuration parameters.
+        """
         self.videos = videos
         self.downloader = downloader
         self.metadata_manager = MetadataManager(config)  # 创建MetadataManager的实例，并传递配置
 
     def should_download(self, video_info):
-        """Determine if a video should be downloaded based on its title and metadata."""
+        """Determine if a video should be downloaded based on its title and metadata.
+        
+        Parameters:
+        - video_info : dict : Information about the video to be downloaded.
+        
+        Returns:
+        - bool : True if the video should be downloaded, False otherwise.
+        """
         sanitized_title = sanitize_filename(video_info['title'])
         video_path = os.path.join(self.downloader.output_directory, sanitized_title + '.mp4')
 
@@ -71,7 +85,13 @@ class DownloaderManager:
         return downloaded_titles, downloaded_count
     
     def _download_single_video(self, video_url: str) -> Optional[str]:
-        """Try downloading a single video and return the title if successful."""
+        """Try downloading a single video and return the title if successful.
+        Parameters:
+        - video_url : str : URL of the video to be downloaded.
+        
+        Returns:
+        - Optional[str] : Title of the downloaded video if successful, None otherwise.
+        """
         retries = 0
         max_retries = config.get("MAX_DOWNLOAD_RETRIES", 3)  # Getting the value from config with a default
 

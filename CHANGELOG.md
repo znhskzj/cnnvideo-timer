@@ -3,11 +3,11 @@
 
 ## Detailed Update Logs
 
-### config_loader.py
+### config_loader.py 1.3.0
 - **v1.3.0**
   - 在所有环境变量参数中添加了对应的中文解释。
 
-### downloader_checker.py
+### downloader_checker.py v2.3.1
 - **v2.1.3**
   - 引入了DownloaderManager类，用于管理视频的下载和检查。
 
@@ -15,38 +15,38 @@
   - 添加了日志配置，确保与其他日志文件保持一致。
   - 修正了配置键名的大小写不一致问题。
 
-### link_extractor.py
+### link_extractor.py v1.3.0
 - **v1.0.1**
   - 添加了logger对象和对`extract_video_links_from_page`函数的错误处理。
 
-### metadata_manager.py
+### metadata_manager.py v1.2.0
 - **v1.0.1**
   - 初始版本，用于管理视频的元数据。
 
-### notifier.py
+### notifier.py v1.3.3
 - **v1.1.1**
   - 修复了电子邮件格式问题。
   - 添加了更多的日志记录。
 
-### scheduler.py
+### scheduler.py v1.2.0
 - Updated version to 1.0.4
 #### Version 1.0.3:
- - Added logger object for the 'scheduler' module.
- - Integrated scheduling times from the configuration file.
- - Added a listener to the BlockingScheduler for better logging.
+ - 为 ‘scheduler’ 模块添加了 logger 对象。
+ - 从配置文件中集成了调度时间。
+ - 为 BlockingScheduler 添加了一个监听器，以便更好地记录日志。
 #### Version 1.0.2:
- - Fixed imports and scheduling time for the 9:00 AM and 9:00 PM runs.
+ - 修复了导入和调度时间，用于上午9:00和下午9:00的运行。
 #### Version 1.0.1:
- - Added a --test flag for immediate execution for testing purposes.
+ - 添加了一个 --test 标志，用于测试目的的立即执行。
 #### Version 1.0.0:
- - Initial release with the scheduler to automate the video download and notification process.
+ - 初始版本，带有调度器，用于自动化视频下载和通知过程。
 
 
-### utils.py
+### utils.py v1.3.0
 - **v1.1.0**
   - 添加了多个实用函数，如`create_directories`, `setup_logging`, `sanitize_filename`。
 
-### video_downloader.py
+### video_downloader.py v1.7.0
 - **v1.6.1**
   - 引入了`LinkExtractor`类来专门处理链接的提取工作。
   - 新增了`schedule_runner`函数，支持根据设定的时间自动运行下载任务。

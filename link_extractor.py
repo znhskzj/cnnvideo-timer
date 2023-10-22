@@ -1,8 +1,6 @@
-# link_extractor.py v1.2.1
+# link_extractor.py v1.3.0
 
 # This script is dedicated to extracting video links from a webpage. It parses the webpage to identify and retrieve URLs of the target videos, preparing them for the subsequent download process.
-
-# link_extractor.py v1.3.0
 
 import requests
 import re
@@ -32,7 +30,7 @@ class VideoLinkExtractor:
         Returns:
         - A list of video URLs.
         """
-        print(f"Timeout value: {timeout}, Type: {type(timeout)}")  # Debug line
+        # print(f"Timeout value: {timeout}, Type: {type(timeout)}")  # Debug line
         try:
             response = requests.get(url, timeout=timeout)  # Using timeout from config
             response.raise_for_status()  

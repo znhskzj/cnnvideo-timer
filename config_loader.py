@@ -1,4 +1,4 @@
-# config_loader.py v1.3.0
+# config_loader.py v1.3.1
 
 # This script is responsible for loading and providing configuration values from a specified environment file, ensuring that the application runs with the correct settings.
 
@@ -6,20 +6,24 @@ import os
 import logging
 import sys  # Importing sys to use sys.exit()
 from dotenv import load_dotenv
-from typing import Any, Optional
+from typing import Any, Optional, Tuple, Union
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def load_config(file_path: str = "config.env") -> dict[str, Any]:
-    """Load configuration values from an environment file.
+    """
+    Load configuration values from an environment file.
     
     Parameters:
-    - file_path : str : Path to the environment file.
-
+    - file_path : str : Path to the environment file (default is "config.env").
+    
     Returns:
-    - dict : A dictionary containing the configuration values.
+    - dict[str, Any] : A dictionary containing the configuration values.
+    
+    Raises:
+    - ValueError : If a configuration value does not match the expected type.
     """
     load_dotenv(file_path)
 
@@ -58,25 +62,31 @@ def load_config(file_path: str = "config.env") -> dict[str, Any]:
     for key, expected_type_default in config_params.items():
         value = os.getenv(key)
         
+        # Unpacking the tuple if a default value is provided
         if isinstance(expected_type_default, tuple):
-            expected_type, default_value = expected_type_default  # Unpack the tuple
+            expected_type, default_value = expected_type_default
             if value is None:
-                value = default_value  # Use the default value if the environment variable is missing
+                value = default_value  # Using the default value if the environment variable is missing
         else:
             expected_type = expected_type_default  # No default value provided
         
+        # Converting the value to the expected type, if necessary
         if expected_type is int:
             try:
                 value = int(value)
             except ValueError:
-                logger.error(f"{key} value in config is not a valid integer.")
-                sys.exit(1)  # Exiting the program if the value is not a valid integer
+                error_message = f"{key} value in config is not a valid integer."
+                logger.error(error_message)
+                raise ValueError(error_message)
         
         config[key] = value
-
+    
     return config
 
+# Example usage
 if __name__ == "__main__":
-    config_data = load_config()
-    # print(f"REQUEST_TIMEOUT value: {config_data['REQUEST_TIMEOUT']}, Type: {type(config_data['REQUEST_TIMEOUT'])}")
-    print(config_data)
+    try:
+        config_data = load_config()
+        print(config_data)
+    except ValueError as e:
+        print(f"An error occurred: {e}")

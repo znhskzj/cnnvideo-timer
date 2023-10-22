@@ -2,30 +2,40 @@
 # 更改完成后，将此文件重命名为config.env
 
 # 通用设置
-LOG_FILENAME=video_downloader.log                 # 日志文件的名称
+LOG_FILENAME=video_downloader.log                                                               # 日志文件的名称
+LOG_DIRECTORY=./log                                                                             # 日志文件目录
+VIDEO_DIRECTORY=./videos                                                                        # 视频路径
+VIDEO_EXTENSION=.mp4                                                                            # 视频格式
+DOWNLOAD_COMPLETE_MESSAGE="All downloads completed. {} videos downloaded."                      # 下载完成后提示
+VIEW_METADATA_PROMPT="Would you like to view the metadata for downloaded videos? (y/n): "       # 下载完成后是否要查看视频的元数据
+AFFIRMATIVE_RESPONSE="y"                                                                        # 默认为查看
+ALL_VIDEOS_DOWNLOADED_MESSAGE="All videos already downloaded. {} videos checked."               # 如果已经下载过视频，提示用户
 
 # Youtube相关设置
-YOUTUBE_BASE_URL=https://www.youtube.com          # Youtube的基础URL
-YOUTUBE_VIDEO_PATTERN=/watch\?v=([a-zA-Z0-9_-]+)  # 用于匹配Youtube视频ID的正则表达式
+YOUTUBE_BASE_URL=https://www.youtube.com                                                        # Youtube的基础URL
+YOUTUBE_VIDEO_PATTERN=/watch\?v=([a-zA-Z0-9_-]+)                                                # 用于匹配Youtube视频ID的正则表达式
 
 # 新闻频道设置
-YOUTUBE_URL=https://www.youtube.com/@CNN10/videos # 需要下载视频的Youtube频道URL
+YOUTUBE_URL=https://www.youtube.com/@CNN10/videos                                               # 需要下载视频的Youtube频道URL，目前为CNN10
 
 # 下载设置
-DOWNLOAD_PATH=./videos                            # 视频下载的存储路径
-MAX_VIDEOS_TO_DOWNLOAD=1                          # 最大下载视频数量
-MAX_DOWNLOAD_RETRIES=3                            # 最大下载重试次数
+DOWNLOAD_PATH=./videos                                                                          # 视频下载的存储路径
+MAX_VIDEOS_TO_DOWNLOAD=5                                                                        # 最大下载视频数量
+MAX_DOWNLOAD_RETRIES=3                                                                          # 最大下载重试次数
+REQUEST_TIMEOUT=10                                                                              # 下载的超时限制
+METADATA_FILE=./metadata/metadata.json                                                     # 存储每个视频的元数据
 
-# 电子邮件设置
-SMTP_SERVER = smtp.gmail.com                      # SMTP服务器地址
-SMTP_PORT = 587                                   # SMTP服务器端口
-SMTP_USERNAME = yourself@gmail.com                # SMTP用户名/邮箱地址
-SMTP_PASSWORD = your code                         # SMTP密码
-SMTP_SENDER = your name                           # 发件人名称
-SMTP_RECEIVER = abc@hotmail.com, def@icloud.com   # 收件人邮箱地址
+# 电子邮件设置（这里必须设置成自己的电子邮件设置，注意部分邮箱的密码需要使用专用密码）
+SMTP_SERVER=                                                                      # SMTP服务器地址
+SMTP_PORT=                                                                                   # SMTP服务器端口
+SMTP_USERNAME=                                                             # SMTP用户名/邮箱地址
+SMTP_PASSWORD=                                                               # SMTP密码
+SMTP_SENDER=                                                                            # 发件人名称
+SMTP_RECEIVER=                                       # 收件人邮箱地址，多人使用逗号分隔
 
 # 计划任务设置
-MORNING_RUN_HOUR=9                                # 早晨运行的小时数（24小时制）
-MORNING_RUN_MINUTE=0                              # 早晨运行的分钟数
-EVENING_RUN_HOUR=21                               # 晚上运行的小时数（24小时制）
-EVENING_RUN_MINUTE=0                              # 晚上运行的分钟数
+MORNING_RUN_HOUR=9                                                                              # 早晨运行的小时数（24小时制）
+MORNING_RUN_MINUTE=0                                                                            # 早晨运行的分钟数
+EVENING_RUN_HOUR=21                                                                             # 晚上运行的小时数（24小时制）
+EVENING_RUN_MINUTE=0                                                                            # 晚上运行的分钟数
+
