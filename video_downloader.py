@@ -6,6 +6,7 @@
 # Standard library imports
 import os
 import logging
+import threading
 
 # Third-party imports
 import yt_dlp.utils
@@ -87,6 +88,9 @@ def display_metadata(last_downloaded_titles, config):
             print(f"Description: {metadata.get('description', 'N/A')}")
             print("-"*50, "\n")
 
+def get_input(prompt, choice_container):
+    choice_container.append(input(prompt).strip().lower())
+
 def main():
     """Main function to orchestrate the video downloading."""
     setup_logging()
@@ -113,11 +117,16 @@ def main():
         logger.info(message)
         
         # Check if user wants to view the metadata
-        choice = input(config["VIEW_METADATA_PROMPT"]).strip().lower()  # Sanitize user input
-        valid_responses = ['yes', 'y', 'no', 'n']  # Define valid responses
-        while choice not in valid_responses:  # Keep asking until a valid response is given
-            print("Invalid response. Please enter 'y' or 'n'.")
-            choice = input(config["VIEW_METADATA_PROMPT"]).strip().lower()
+        choice_container = []  # A container to hold the user input from the thread
+        thread = threading.Thread(target=get_input, args=(config["VIEW_METADATA_PROMPT"], choice_container))
+        thread.daemon = True  # Ensure the thread will be terminated when the main program finishes
+        thread.start()
+        thread.join(timeout=2)  # Wait for 2 seconds for user input
+
+        choice = choice_container[0] if choice_container else 'n'  # Use the user input if available, otherwise use default value
+
+        if choice is None or choice not in ['yes', 'y', 'no', 'n']:  # Use default value if no valid input received
+            choice = 'n'
 
         if choice in ['yes', 'y']:  # Check against valid affirmative responses
             display_metadata(downloaded_titles, config)

@@ -59,6 +59,7 @@ class Notifier:
                     server.send_message(message)
                 
                 logger.info(f"Notification email sent successfully to {', '.join(self.recipients)}!")
+                print(f"\nNotification email sent successfully to {', '.join(self.recipients)}!")  # Added print statement
                 break  # Exit the loop if the email is sent successfully
                 
             except Exception as e:
