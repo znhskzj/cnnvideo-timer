@@ -76,6 +76,8 @@
    root用户更改zhurong用户密码：passwd zhurong
    测试SSH连接：ssh -T git@github.com
    本地增加私钥命令：ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f github-key
+   本地验证vps连接：ssh -i path/to/your/private/key zhurong@74.48.63.73
+
 
 
 
