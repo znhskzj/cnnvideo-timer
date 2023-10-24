@@ -3,7 +3,7 @@ name: Deploy CNN Video Timer to ZR'S VPS
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
