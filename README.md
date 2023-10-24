@@ -35,8 +35,13 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。
 
 ### Mac 和 Linux
 1. 确保已安装 Python。
-2. 运行 `pip install -r requirements.txt` 安装必需的 Python 包。
-3. 在终端中运行 `deploy.sh` 脚本进行部署。
+2. 运行以下命令来一键自动部署项目(Ubuntu和Debian)：
+
+   ```bash
+   curl -sSL https://raw.githubusercontent.com/znhskzj/cnnvideo-timer/main/deploy.sh | bash
+
+如果需要手工部署，请确保 deploy.sh 脚本有执行权限。可以使用如下命令进行检查和设置：
+chmod +x deploy.sh
 
 ## 贡献
 如有任何问题或建议，或想要参与项目贡献，可以通过邮件方式联系我们，或在项目中提出 Issue 或 Pull Request。

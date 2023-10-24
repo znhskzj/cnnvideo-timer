@@ -39,7 +39,7 @@ class YTDownloader:
             'format': 'best[height<=720][ext=mp4]',
             'outtmpl': os.path.join(self.output_directory, '%(title)s.%(ext)s'),
             'quiet': True,
-            'no_progress': False,
+            'no_progress': True,
             'no_warnings': True,
             'progress_hooks': [self.hook]
         }

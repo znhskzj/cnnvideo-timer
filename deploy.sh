@@ -1,12 +1,20 @@
 #!/bin/bash
 
 # File: deploy.sh
-# Version: 1.1.0
+# Version: 1.2.0
 # Description: This script automates the deployment process of the cnnvideo-timer application. 
 # It clones the repository, sets up a virtual environment, installs necessary packages, 
-# and schedules the application to run daily.
+# sets the time zone, and schedules the application to run daily.
 
-#!/bin/bash
+function check_commands {
+    commands=("git" "python3" "pip3")
+    for cmd in "${commands[@]}"; do
+        if ! command -v $cmd &> /dev/null; then
+            echo "$cmd could not be found, please install it."
+            exit 1
+        fi
+    done
+}
 
 function clone_repo {
     if [ ! -d "cnnvideo-timer" ]; then
@@ -33,6 +41,10 @@ function install_requirements {
     fi
 }
 
+function set_timezone {
+    timedatectl set-timezone America/New_York
+}
+
 function setup_cron {
     (crontab -l 2>/dev/null; echo "0 0 * * * cd $(pwd) && ./venv/bin/python3 scheduler.py >> cron.log 2>&1") | crontab -
     if [ $? -ne 0 ]; then
@@ -42,10 +54,12 @@ function setup_cron {
 }
 
 # Main script execution
+check_commands
 clone_repo
 cd cnnvideo-timer || exit
 setup_venv
 install_requirements
+set_timezone
 setup_cron
 
 echo "Setup completed successfully."
