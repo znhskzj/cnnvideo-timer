@@ -18,6 +18,7 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。
 - `scheduler.py`: 调度器模块
 - `utils.py`: 实用工具模块
 - `video_downloader.py`: 视频下载器模块
+- `LICENSE.md`: 许可证
 
 ## 更新日志
 请查看 `CHANGELOG.md` 文件以获取详细的更新日志。
@@ -47,7 +48,6 @@ chmod +x deploy.sh
 如有任何问题或建议，或想要参与项目贡献，可以通过邮件方式联系我们，或在项目中提出 Issue 或 Pull Request。
 
 ## 许可证
-## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## 风险提示
