@@ -15,4 +15,5 @@ jobs:
 
     - name: Deploy to VPS
       run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} zhurong@74.48.63.73 "cd /opt/cnnvideo-timer && git pull"
+        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} zhurong@74.48.63.73 "cd /opt/cnnvideo-timer"
+        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} zhurong@74.48.63.73 "git pull"
