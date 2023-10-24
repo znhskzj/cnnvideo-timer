@@ -47,7 +47,8 @@ chmod +x deploy.sh
 如有任何问题或建议，或想要参与项目贡献，可以通过邮件方式联系我们，或在项目中提出 Issue 或 Pull Request。
 
 ## 许可证
-本项目采用 MIT 许可证。
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## 风险提示
 使用此工具时，请遵守相关法律法规，并尊重版权。
