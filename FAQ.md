@@ -64,6 +64,22 @@
 ### 8. **其它相关命令**
 
    查看当前日期和时间：date
+   查看有登录权限的用户：getent passwd | grep "/home" | cut -d: -f1
+   使用某用户登陆后切换到家目录：cd ~
+   查看现在哪个目录：pwd
+   访问.ssh目录，没有则创建：cd .ssh || mkdir .ssh && cd .ssh
+   查看具体文件的权限：ls -l ~/.ssh/gh-actions
+   更改文件所有者和组：sudo chown zhurong:zhurong ~/.ssh/gh-actions
+   更改文件权限：chmod 600 ~/.ssh/gh-actions
+   root用户切换到zhurong用户：su - zhurong
+   zhurong用户退回root用户：exit
+   root用户更改zhurong用户密码：passwd zhurong
+   测试SSH连接：ssh -T git@github.com
+
+
+
+
+
    
    
 

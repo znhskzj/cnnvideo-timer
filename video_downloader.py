@@ -1,4 +1,4 @@
-#  video_downloader.py version 1.7.0
+#  video_downloader.py version 1.7.1
 
 # "This module automatically downloads the latest CNN10 video using yt-dlp, ensuring titles are sanitized and saved to the designated directory."
 # -*- coding: utf-8 -*-
