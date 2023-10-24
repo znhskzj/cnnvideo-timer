@@ -1,0 +1,18 @@
+name: Deploy CNN Video Timer to ZR'S VPS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to VPS
+      run: |
+        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} zhurong@74.48.63.73 "cd /opt/cnnvideo-timer && git pull"
