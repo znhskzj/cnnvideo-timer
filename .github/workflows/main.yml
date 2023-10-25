@@ -22,6 +22,6 @@ jobs:
 
     - name: Deploy to VPS
       run: |
-        ssh -i private_key.pem zhurong@74.48.63.73 <<'ENDSSH'
+        ssh -i private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null zhurong@74.48.63.73 <<'ENDSSH'
         cd /opt/cnnvideo-timer && git pull
         ENDSSH
