@@ -38,7 +38,7 @@
    您可以通过检查项目目录中的 `cron.log` 文件来查看 cron 任务的日志。
    查看cron.log最后修改时间：ls -l cron.log
    查看cron.log最后20行的记录：tail -n 20 cron.log
-   查看当前用户的cron作业表：crontab -l
+   查看当前用户的cron作业表（每个用户不一样）：crontab -l
 
 ### 6. **如何调整 VPS 的时区设置？**
 
