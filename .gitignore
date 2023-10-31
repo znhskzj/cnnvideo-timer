@@ -12,3 +12,5 @@ gh-actions.pub
 /bin/
 /tmp/
 /metadata/
+.github/
+__pycache__/

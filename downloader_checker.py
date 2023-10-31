@@ -1,4 +1,4 @@
-# downloader_checker.py v2.3.1
+# downloader_checker.py v2.4.1
 
 # This script is responsible for checking the availability of new videos and managing their download process. It utilizes the video_downloader module to perform the actual download, and it ensures that each video is only downloaded once by checking against a record of previously downloaded videos.
 
@@ -6,6 +6,7 @@ import time
 import os
 import logging
 import random  # Importing random to introduce randomness in retry intervals
+import yt_dlp
 from typing import Any, Optional
 from utils import sanitize_filename
 from config_loader import load_config
@@ -40,16 +41,10 @@ class DownloaderManager:
         - bool : True if the video should be downloaded, False otherwise.
         """
         sanitized_title = sanitize_filename(video_info['title'])
-        video_path = os.path.join(self.downloader.output_directory, sanitized_title + '.mp4')
+        video_path = os.path.join(self.downloader.output_directory, sanitized_title + config["VIDEO_EXTENSION"])
 
-        # Check if the file exists in the file system.
-        file_exists = os.path.exists(video_path)
-
-        # Check if metadata exists.
-        metadata_exists = self.metadata_manager.query_metadata(video_info['id']) is not None
-
-        return not (file_exists and metadata_exists)
-
+        # Check if the file exists in the file system and metadata exists.
+        return not (os.path.exists(video_path) and self.metadata_manager.query_metadata(video_info['id']))
 
     def store_video_metadata(self, video_info):
         """Store video metadata using MetadataManager."""
@@ -68,29 +63,31 @@ class DownloaderManager:
         self.metadata_manager.save_or_update_metadata(metadata)
 
     def check_and_download(self):
+        downloaded_filenames = []  # 用于存储已下载视频的文件名
         downloaded_count = 0
-        downloaded_titles = []  
+        # downloaded_titles = []  
 
         logger.info(f"Preparing to download {len(self.videos)} videos...")
 
         for video_url in self.videos:
             try:
-                downloaded_title = self._download_single_video(video_url)  # Simplified download logic
-                if downloaded_title:
-                    downloaded_titles.append(downloaded_title)
+                downloaded_title, cleaned_filename = self._download_single_video(video_url)  # 获取原始标题和清理过的文件名
+                if cleaned_filename:  # 如果有清理过的文件名，表示视频已成功下载
+                    downloaded_filenames.append(cleaned_filename)  # 保存清理过的文件名
                     downloaded_count += 1
             except Exception as e:
                 logger.error(f"Failed to download video from {video_url}. Error: {e}.", exc_info=True)  # Logging more error info
-
-        return downloaded_titles, downloaded_count
+                
+        return downloaded_filenames
     
     def _download_single_video(self, video_url: str) -> Optional[str]:
         """Try downloading a single video and return the title if successful.
+        
         Parameters:
         - video_url : str : URL of the video to be downloaded.
         
         Returns:
-        - Optional[str] : Title of the downloaded video if successful, None otherwise.
+        - tuple[Optional[str], Optional[str]] : Tuple containing the title and filename of the downloaded video if successful, None otherwise.
         """
         retries = 0
         max_retries = config.get("MAX_DOWNLOAD_RETRIES", 3)  # Getting the value from config with a default
@@ -103,20 +100,57 @@ class DownloaderManager:
                     print(f"Downloading: {video_info['title']}")
                     self.downloader.download_video(video_url)
                     self.store_video_metadata(video_info)
-                    logger.info(f"Successfully downloaded {video_info['title']}.")
-                    return video_info['title']  # Return the title of the downloaded video
+                    # logger.info(f"Successfully downloaded {video_info['title']}.")
+                    
+                    sanitized_title = sanitize_filename(video_info['title']) + config["VIDEO_EXTENSION"]
+                    return video_info['title'], sanitized_title  # Return the title and filename of the downloaded video
 
-                sanitized_title = sanitize_filename(video_info['title'])
-                print(f"Video {sanitized_title} already exists. Skipping download.")
-                logger.info(f"Video {sanitized_title} already exists. Skipping download.")
-                return None  # Return None if the video was not downloaded
+                logger.info(f"Video {video_info['title']} already exists. Skipping download.")
+                return None, None  # Return None if the video was not downloaded
 
             except Exception as e:
-                logger.error(f"Error downloading video from {video_url}. Error: {e}. Retrying...")
                 retries += 1
-                if retries >= max_retries:
-                    logger.error(f"Failed to download video from {video_url} after {retries} retries.")
-                    return None  # Return None if the download failed after retries
+                logger.error(f"Error downloading video from {video_url}. Error: {e}. Retrying {retries}/{max_retries}...")
+                time.sleep((retries + 1) * 5 + random.randint(1, 5))  # Exponential backoff with randomness
 
-                sleep_time = (retries + 1) * 5 + random.randint(1, 5)  # Adding randomness to the sleep time
-                time.sleep(sleep_time)  # Exponential backoff with randomness
+        logger.error(f"Failed to download video from {video_url} after {max_retries} retries.")
+        return None, None  # Return None if the download failed after retries
+    
+    def get_suitable_formats(self, video_url):
+        max_resolution = self.config.get('MAX_RESOLUTION') 
+        ydl_opts = {
+        'quiet': True,
+        'no_progress': True,
+        'no_warnings': True,
+        }
+    
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(video_url, download=False)
+            formats = info_dict.get('formats', [])
+            
+            # 筛选符合条件的格式
+            suitable_formats = [
+                f for f in formats 
+                if f['ext'] == 'mp4' and f.get('height') and f['height'] <= max_resolution
+            ]
+            
+            # 按文件大小排序
+            suitable_formats.sort(key=lambda f: f['filesize'] or 0)
+            
+            # 获取格式ID列表
+            format_ids = [str(f['format_id']) for f in suitable_formats]
+            
+            return format_ids
+        
+    def download_video_with_format(self, video_url):
+        format_list = self.get_suitable_formats(video_url)
+        
+        for fmt in format_list:
+            try:
+                # 尝试下载
+                self.downloader.download_video(video_url, fmt)
+                # 如果下载成功，退出循环
+                break
+            except Exception as e:
+                # 如果下载失败，继续尝试其他格式
+                logger.error(f"Error downloading {video_url} with format {fmt}: {e}")

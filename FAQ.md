@@ -11,7 +11,10 @@
 
 ### 2. **如何设置 Python 虚拟环境？**
 
-   在项目目录中，您可以使用以下命令创建和激活虚拟环境：
+   先进入项目目录中
+   cd /opt/cnnvideo-timer
+
+   您可以使用以下命令创建和激活虚拟环境：
    ```bash
    python3 -m venv venv
    source venv/bin/activate
@@ -39,6 +42,9 @@
    查看cron.log最后修改时间：ls -l cron.log
    查看cron.log最后20行的记录：tail -n 20 cron.log
    查看当前用户的cron作业表（每个用户不一样）：crontab -l
+   检查cron服务状态：systemctl status cron
+   重启cron服务：sudo systemctl restart cron
+
 
 ### 6. **如何调整 VPS 的时区设置？**
 
@@ -78,6 +84,8 @@
    本地增加私钥命令（email要换）：ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f github-key
    本地验证vps连接：ssh -i path/to/your/private/key zhurong@74.48.63.73
    github端可能需要金庸主机密钥检查
+   如何在虚拟环境中安装项目依赖：pip install -r requirements.txt
+
 
 
 

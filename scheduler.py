@@ -1,4 +1,4 @@
-# scheduler.py v1.2.0
+# scheduler.py v1.3.0
 
 # This script is responsible for scheduling and automating the video checking and downloading tasks. It ensures that these tasks are executed at specified intervals, enabling the automatic and timely downloading of new videos.
 
@@ -19,8 +19,22 @@ from config_loader import load_config
 logger = logging.getLogger('scheduler')
 config = load_config()
 
+def parse_arguments():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(description="Schedule the video downloader job.")
+    parser.add_argument('--test', action='store_true', help="Run the job immediately for testing.")
+    return parser.parse_args()
+
+def listener(event):
+    if event.exception:
+        logger.error(f"Scheduler job crashed with exception: {event.exception}")
+    else:
+        logger.info("Scheduler job completed successfully.")
+
 def job():
-    logger.info("Starting scheduled video download...")
+    start_time = datetime.now()
+    logger.info(f"Starting scheduled video download at {start_time}")
+    
     downloaded_titles = video_downloader_main()
     
     if downloaded_titles:
@@ -28,13 +42,9 @@ def job():
         downloaded_video_paths = [os.path.join(config["VIDEO_DIRECTORY"], sanitize_filename(title) + config["VIDEO_EXTENSION"]) 
                                  for title in downloaded_titles]
         notifier.send_notification(downloaded_video_paths)
-        logger.info(f"Finished downloading {len(downloaded_titles)} videos.")
-        
-def listener(event):
-    if event.exception:
-        logger.error(f"Scheduler job crashed with exception: {event.exception}")
-    else:
-        logger.info("Scheduler job completed successfully.")
+    
+    end_time = datetime.now()
+    logger.info(f"Finished downloading {len(downloaded_titles)} videos at {end_time}")
 
 def next_run_time():
     now = datetime.now()
@@ -49,13 +59,12 @@ def next_run_time():
         return morning_run + timedelta(days=1)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Schedule the video downloader job.")
-    parser.add_argument('--test', action='store_true', help="Run the job immediately for testing.")
-    args = parser.parse_args()
+    args = parse_arguments()
 
     if args.test:
         logger.info("Starting test run...")
         job()
+        logger.info("Test run completed.")
     else:
         scheduler = BlockingScheduler()
         scheduler.add_listener(listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)

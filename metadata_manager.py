@@ -1,4 +1,4 @@
-# metadata_manager.py v1.2.0
+# metadata_manager.py v1.3.2
 
 # Description: Manages the storage, retrieval, and querying of video metadata.
 
@@ -6,65 +6,47 @@ import json
 import os
 import logging
 from typing import Optional
+from config_loader import load_config
 
 logger = logging.getLogger('metadata_manager')
+config = load_config()
+
+# 引入 youtube_metadata_checker 中的方法
+from youtube_metadata_checker import get_metadata_from_api, get_metadata_from_yt_dlp
 
 class MetadataManager:
-
     def __init__(self, config):
-        """Initialize the MetadataManager with a specific metadata file."""
-        self.metadata_file = config["METADATA_FILE"]
-        if not os.path.exists(self.metadata_file):
-            os.makedirs(os.path.dirname(self.metadata_file), exist_ok=True)
-            self._initialize_metadata_file()
+        self.metadata_file_path = config['METADATA_FILE']  # 获取元数据文件的路径
 
-    def _initialize_metadata_file(self):
-        """Initialize an empty metadata file."""
-        try:
-            with open(self.metadata_file, 'w') as f:
-                json.dump([], f)
-        except Exception as e:
-            logger.error(f"Error initializing metadata file: {e}")
-            raise
+    def save_or_update_metadata(self, metadata):
+        video_id = metadata.get('id')
+        if video_id:
+            all_metadata = self.get_all_metadata()
+            all_metadata[video_id] = metadata
+            with open(self.metadata_file_path, 'w', encoding='utf-8') as file:
+                json.dump(all_metadata, file, ensure_ascii=False, indent=4)
 
-    def save_or_update_metadata(self, metadata: dict):
-        """Save or update a video's metadata in the metadata file."""
-        try:
-            data = self.get_all_metadata()
+    def get_all_metadata(self):
+        if os.path.exists(self.metadata_file_path):
+            with open(self.metadata_file_path, 'r', encoding='utf-8') as file:
+                return json.load(file)
+        return {}
 
-            existing_metadata = [item for item in data if item['id'] == metadata['id']]
-            if existing_metadata:
-                index = data.index(existing_metadata[0])
-                data[index] = metadata
-            else:
-                data.append(metadata)
+    def query_metadata(self, video_id):
+        all_metadata = self.get_all_metadata()
+        return all_metadata.get(video_id)
 
-            with open(self.metadata_file, 'w') as f:
-                json.dump(data, f)
-
-            logger.info(f"Stored/Updated metadata for video: {metadata['title']}")
-
-        except Exception as e:
-            logger.error(f"Error saving/updating metadata for video {metadata['title']}: {e}")
-            raise
-
-    def get_all_metadata(self) -> list:
-        """Retrieve all video metadata from the metadata file."""
-        try:
-            with open(self.metadata_file, "r") as f:
-                return json.load(f)
-        except Exception as e:
-            logger.error(f"Error retrieving all metadata: {e}")
-            raise
-
-    def query_metadata(self, video_id: str) -> Optional[dict]:
-        """Query metadata based on a video ID."""
-        try:
-            data = self.get_all_metadata()
-            for item in data:
-                if item['id'] == video_id:
-                    return item
-            return None
-        except Exception as e:
-            logger.error(f"Error querying metadata for video ID {video_id}: {e}")
-            raise
+    def extract_and_save_additional_metadata(self, video_id):
+        if self.default_metadata_extractor == 'api':
+            additional_metadata = get_metadata_from_api(video_id)
+        else:
+            additional_metadata = get_metadata_from_yt_dlp(video_id)
+        
+        if additional_metadata:
+            existing_metadata = self.query_metadata(video_id) or {}
+            updated_metadata = {**existing_metadata, **additional_metadata}
+            self.save_or_update_metadata(updated_metadata)
+    
+    def get_metadata_file_path(self, video_id):
+        """生成元数据文件的路径"""
+        return os.path.join(self.metadata_file_path, f"{video_id}.json")

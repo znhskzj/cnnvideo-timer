@@ -2,23 +2,28 @@
 # CNN Video Timer
 
 ## 功能介绍
-CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。
+CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它能自动提取视频链接，下载视频，并且可以配置为定时执行这些任务。下载完成后，它还可以通过电子邮件发送通知。
 
 ## 文件结构
 - `CHANGELOG.md`: 各文件次要版本更新记录
-- `config_loader.py`: 配置加载模块
-- `configenv`: 参考配置文件，改名后设置自己邮箱设置
-- `deploy.sh`: linux ubuntu安装脚本
-- `downloader_checker.py`: 下载检查器模块
-- `link_extractor.py`: 链接提取模块
-- `metadata_manager.py`: 元数据管理模块
-- `notifier.py`: 通知模块
+- `baidu_cloud_uploader.py`: 百度云上传模块，负责将下载的视频上传到百度云
+- `config_loader.py`: 配置加载模块，负责加载和验证环境配置
+- `configenv`: 参考配置文件，需要更名并设置相应的参数
+- `deploy.sh`: linux ubuntu安装脚本，用于自动部署项目
+- `downloader_checker.py`: 下载检查器模块，负责检查和管理视频下载
+- `link_extractor.py`: 链接提取模块，负责从网页提取视频链接
+- `metadata_manager.py`: 元数据管理模块，负责管理视频的元数据
+- `notifier.py`: 通知模块，负责发送下载完成的电子邮件通知
 - `README.md`: 本说明
 - `requirements.txt`: 本项目依赖
-- `scheduler.py`: 调度器模块
-- `utils.py`: 实用工具模块
-- `video_downloader.py`: 视频下载器模块
+- `scheduler.py`: 调度器模块，负责定时执行下载任务
+- `utils.py`: 实用工具模块，包含多个实用函数
+- `video_downloader.py`: 视频下载器模块，负责视频的下载
 - `LICENSE.md`: 许可证
+- `bin/`: 存放第三方工具，如 `ffmpeg`
+- `log/`: 存放日志文件
+- `metadata/`: 存放下载视频的元数据信息
+- `videos/`: 存放下载的视频文件
 
 ## 更新日志
 请查看 `CHANGELOG.md` 文件以获取详细的更新日志。

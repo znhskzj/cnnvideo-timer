@@ -1,6 +1,4 @@
-# link_extractor.py v1.3.0
-
-# This script is dedicated to extracting video links from a webpage. It parses the webpage to identify and retrieve URLs of the target videos, preparing them for the subsequent download process.
+# link_extractor.py v1.4.1
 
 import requests
 import re
@@ -14,25 +12,28 @@ config = load_config()
 class VideoLinkExtractor:
     
     @staticmethod
-    def extract_video_links_from_page(url: str = config["YOUTUBE_URL"], max_links: int = config["MAX_VIDEOS_TO_DOWNLOAD"], 
-                                      video_pattern: str = config["YOUTUBE_VIDEO_PATTERN"], base_url: str = config["YOUTUBE_BASE_URL"], 
-                                      timeout: int = config.get("REQUEST_TIMEOUT", 10)) -> list:
+    def extract_video_links_from_page(url=None, max_links=None, video_pattern=None, base_url=None, timeout=None) -> list:
         """
         Extract video links from a webpage.
 
-        Parameters:
-        - url: The webpage URL to extract video links from.
-        - max_links: Maximum number of video links to return.
-        - video_pattern: Regular expression pattern to match video links.
-        - base_url: Base URL to construct full video URLs.
-        - timeout: Request timeout.
-
-        Returns:
-        - A list of video URLs.
+        Parameters are loaded from configuration if not provided.
         """
-        # print(f"Timeout value: {timeout}, Type: {type(timeout)}")  # Debug line
+        url = url or config["YOUTUBE_URL"]
+        max_links = max_links or config["MAX_VIDEOS_TO_DOWNLOAD"]
+        video_pattern = video_pattern or config["YOUTUBE_VIDEO_PATTERN"]
+        base_url = base_url or config["YOUTUBE_BASE_URL"]
+        timeout = timeout or config.get("REQUEST_TIMEOUT", 10)
+
+        # 确保 max_links 是整数
+        if not isinstance(max_links, int):
+            try:
+                max_links = int(max_links)
+            except ValueError:
+                logger.error(f"Invalid MAX_VIDEOS_TO_DOWNLOAD value: {max_links}. It must be an integer.")
+                return []
+
         try:
-            response = requests.get(url, timeout=timeout)  # Using timeout from config
+            response = requests.get(url, timeout=timeout)
             response.raise_for_status()  
 
             video_links = re.findall(video_pattern, response.text)
@@ -40,7 +41,7 @@ class VideoLinkExtractor:
             return full_links[:max_links]
 
         except requests.Timeout:
-            logger.error(f"Request to {url} timed out.")
+            logger.error(f"Request to {url} timed out after {timeout} seconds.")
         except requests.RequestException as e:
             logger.error(f"Error fetching the page at {url}. Error: {e}")
         
