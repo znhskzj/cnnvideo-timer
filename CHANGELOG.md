@@ -3,6 +3,12 @@
 
 ## Detailed Update Logs
 
+### baidu_cloud_uploader.py 1.3.3
+- **v1.3.3**
+  - 代码重构，增加用户提示等。
+- **v1.0.0**
+  - 实现上传百度云盘的基本功能。
+
 ### config_loader.py 1.4.1
 - **v1.4.0**
   - 添加了对缺失环境变量的默认值和错误处理。
@@ -88,5 +94,7 @@
   - 其他一些小的改进和优化。
 
 ### youtube_metadata_checker.py v1.0.1
+- **v1.0.0**
+  - 实现youtube API和yt-dlp下载视频元数据。
 
 Note: For main updates, please refer to the README.md file.
