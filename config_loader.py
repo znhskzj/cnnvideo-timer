@@ -1,19 +1,24 @@
 # config_loader.py v1.4.1
 
-# This script is responsible for loading and providing configuration values from a specified environment file, ensuring that the application runs with the correct settings.
+"""
+This script is responsible for loading and providing configuration values from a specified environment file,
+ensuring that the application runs with the correct settings.
+"""
 
 import os
 import logging
 from dotenv import load_dotenv
+from typing import Dict, Union, Tuple, Type, Any
 
 # Setup logging
 logger = logging.getLogger('config_loader')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-def load_config(file_path: str = "config.env") -> dict:
+def load_config(file_path: str = "config.env") -> Dict[str, Any]:
     """
     Load configuration values from an environment file.
     
-    Parameters:
+    Arus:
     - file_path : str : Path to the environment file (default is "config.env").
     
     Returns:
@@ -23,7 +28,7 @@ def load_config(file_path: str = "config.env") -> dict:
 
 
     # Predefined configuration parameters with their expected types
-    config_params = {
+    config_params: Dict[str, Union[Tuple[Type, Any], Type]] = {
         "YOUTUBE_URL": (str, "https://www.youtube.com/@CNN10/videos"),
         "DOWNLOAD_PATH": (str,"./videos"),
         "VIDEO_EXTENSION": (str, ".mp4"), 
