@@ -30,9 +30,6 @@ class BaiduCloudUploader:
         self.logger = logging.getLogger('baidu_cloud_uploader')
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         
-        # Load environment variables from the config.env file
-        load_dotenv(dotenv_path=config_path)
-                
         self.access_token = os.getenv('BAIDU_ACCESS_TOKEN')
         self.app_name = os.getenv('BAIDU_APP_NAME')
         
@@ -60,7 +57,7 @@ class BaiduCloudUploader:
         self.logger.error(message)
         print(f"ERROR: {message}")
 
-    def send_request(self, url: str, method: str, headers: dict = None, params: dict = None, data: dict = None) -> dict:
+    def send_request(self, url: str, method: str, headers: dict = None, params: dict = None, data: dict = None, files: dict = None) -> dict:
         """
         Send an HTTP request and return the response.
 
@@ -70,7 +67,8 @@ class BaiduCloudUploader:
         - headers : dict : (Optional) HTTP headers to include with the request.
         - params : dict : (Optional) URL parameters to include with the request.
         - data : dict : (Optional) Data to include with a POST request.
-
+        - files : dict : (Optional) Files to include with a POST request.
+        
         Returns:
         - dict : The JSON response from the server.
         """
@@ -247,7 +245,7 @@ class BaiduCloudUploader:
 if __name__ == "__main__":
     uploader = BaiduCloudUploader()
     if len(sys.argv) != 2:
-        uploader.self._log_error('Incorrect number of arguments')
+        uploader._log_error('Incorrect number of arguments')
         print("Usage: python baidu_cloud_uploader.py <FILE_PATH>")
         sys.exit(1)
     
