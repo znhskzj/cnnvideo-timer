@@ -17,7 +17,7 @@ DEFAULT_METADATA_EXTRACTOR=yt_dlp  # or api                                     
 # Youtube相关设置
 YOUTUBE_BASE_URL=https://www.youtube.com                                                        # Youtube的基础URL
 YOUTUBE_VIDEO_PATTERN=/watch\?v=([a-zA-Z0-9_-]+)                                                # 用于匹配Youtube视频ID的正则表达式
-YOUTUBE_API_KEY=                                         # 需要使用Youtube API操纵视频的要提供
+YOUTUBE_API_KEY=                                                                                # 需要使用Youtube API获取视频元数据
 
 # 新闻频道设置
 YOUTUBE_URL=https://www.youtube.com/@CNN10/videos                                               # 需要下载视频的Youtube频道URL，目前为CNN10
@@ -27,30 +27,29 @@ DOWNLOAD_PATH=./videos                                                          
 MAX_VIDEOS_TO_DOWNLOAD=1                                                                        # 最大下载视频数量
 MAX_DOWNLOAD_RETRIES=3                                                                          # 最大下载重试次数
 REQUEST_TIMEOUT=10                                                                              # 下载的超时限制
-METADATA_FILE=./metadata/metadata.json                                                     # 存储每个视频的元数据
+METADATA_FILE=./metadata/metadata.json                                                          # 存储每个视频的元数据
 METADATA_DIRECTORY=./metadata                                                                   # 储存元数据的目录
 MAX_RESOLUTION=720                                                                              # 下载最大尺寸设置
 
 # 百度云盘设置（如需要自动上传百度云盘，需要提供以下参数）
-BAIDU_APPID=xxxxxxx                                                                            # 百度云盘APPID
-BAIDU_APPKEY=XXXXXXXXXXXXXXXXXXX                                                   # 百度云盘APPKEY
-BAIDU_SECRETKEY=XXXXXXXXXXXXXXXXXXXXXXXXXXX                                                # 百度云盘SECRETKEY
-BAIDU_SIGNKEY=XXXXXXXXXXXXXXXXXXX                                                  # 百度云盘SIGNKEY
+BAIDU_APPID=xxxxxxx                                                                             # 百度云盘APPID
+BAIDU_APPKEY=XXXXXXXXXXXXXXXXXXX                                                                # 百度云盘APPKEY
+BAIDU_SECRETKEY=XXXXXXXXXXXXXXXXXXXXXXXXXXX                                                     # 百度云盘SECRETKEY
+BAIDU_SIGNKEY=XXXXXXXXXXXXXXXXXXX                                                               # 百度云盘SIGNKEY
 BAIDU_REDIRECT_URI=http://localhost                                                             # 百度云盘重定向网址
-BAIDU_APP_NAME=XXXXXXXXXXXXXXXXXXXXXXXXXX                                                                        # 百度云盘应用名称
-BAIDU_ACCESS_TOKEN='xxx.XXXXXXXXXXXXXXXXXXXXXXXXXX'    # 百度云盘授权用户的令牌
+BAIDU_APP_NAME=XXXXXXXXXXXXXXXXXXXXXXXXXX                                                       # 百度云盘应用名称
+BAIDU_ACCESS_TOKEN='xxx.XXXXXXXXXXXXXXXXXXXXXXXXXX'                                             # 百度云盘授权用户的令牌
 
 # 电子邮件设置（如果需要接收邮件通知，需要提供以下参数）
-SMTP_SERVER=                                                                      # SMTP服务器地址
-SMTP_PORT=                                                                                   # SMTP服务器端口
-SMTP_USERNAME=                                                             # SMTP用户名/邮箱地址
-SMTP_PASSWORD=                                                               # SMTP密码
-SMTP_SENDER=                                                                            # 发件人名称
-SMTP_RECEIVER=                                       # 收件人邮箱地址，多人使用逗号分隔
+SMTP_SERVER=                                                                                    # SMTP服务器地址
+SMTP_PORT=                                                                                      # SMTP服务器端口
+SMTP_USERNAME=                                                                                  # SMTP用户名/邮箱地址
+SMTP_PASSWORD=                                                                                  # SMTP密码
+SMTP_SENDER=                                                                                    # 发件人名称
+SMTP_RECEIVER=                                                                                  # 收件人邮箱地址，多人使用逗号分隔
 
 # 计划任务设置
 MORNING_RUN_HOUR=8                                                                              # 早晨运行的小时数（24小时制）
 MORNING_RUN_MINUTE=0                                                                            # 早晨运行的分钟数
 EVENING_RUN_HOUR=20                                                                             # 晚上运行的小时数（24小时制）
 EVENING_RUN_MINUTE=0                                                                            # 晚上运行的分钟数
-
