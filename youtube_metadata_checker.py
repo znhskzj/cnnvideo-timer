@@ -1,7 +1,8 @@
-# youtube_metadata_checker.py v1.0.1
-
-# "This module extracts and logs metadata from YouTube videos using both the YouTube Data API and yt-dlp, and it's designed to work seamlessly with a list of video URLs obtained from a VideoLinkExtractor."
-
+"""
+youtube_metadata_checker.py v1.0.2
+This module extracts and logs metadata from YouTube videos using both the YouTube Data API and yt-dlp.
+It's designed to work seamlessly with a list of video URLs obtained from a VideoLinkExtractor.
+"""
 import requests
 import json
 import re
@@ -10,27 +11,27 @@ import logging
 import argparse
 import yt_dlp
 from datetime import datetime
+from typing import Optional, Dict
 from config_loader import load_config
 from link_extractor import VideoLinkExtractor
 
-# 创建一个logger对象
+# Create a logger object
 logger = logging.getLogger('youtube_metadata_checker')
-# logging.basicConfig(level=logging.INFO)  # 设置日志级别为INFO
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler()])
 
 config = load_config()
 
 API_KEY = config["YOUTUBE_API_KEY"]
 
-def get_metadata_from_api(video_id):
+def get_metadata_from_api(video_id: str) -> dict:
     """
     Get metadata from YouTube Data API.
     
-    Parameters:
-    - video_id : str : The ID of the YouTube video.
+    Args:
+        video_id (str): The ID of the YouTube video.
     
     Returns:
-    - dict : The metadata obtained from the API.
+        dict: The metadata obtained from the API.
     """
     part_parameters = 'snippet,statistics,contentDetails'
     url = f"https://www.googleapis.com/youtube/v3/videos?part={part_parameters}&id={video_id}&key={API_KEY}"
@@ -63,7 +64,17 @@ def get_metadata_from_api(video_id):
         logger.error(f"API Error: {response.status_code}, {response.text}")
         return None
 
-def get_metadata_from_yt_dlp(video_id):
+def get_metadata_from_yt_dlp(video_id: str) -> Optional[Dict]:
+    """
+    Retrieve video metadata using the yt-dlp library.
+
+    Parameters:
+    - video_id : str : The ID of the YouTube video.
+
+    Returns:
+    - dict : A dictionary containing metadata such as title, description, publication date, channel title, and various counts (views, likes, dislikes, comments).
+             Returns None if there's an error in fetching or processing the data.
+    """
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
@@ -74,7 +85,7 @@ def get_metadata_from_yt_dlp(video_id):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(f'https://www.youtube.com/watch?v={video_id}', download=False)
         
-        # 获取更多的元数据
+        # Obtain more metadata
         metadata_yt_dlp = {
             'title': info_dict.get('title'),
             'description': info_dict.get('description'),
@@ -87,24 +98,24 @@ def get_metadata_from_yt_dlp(video_id):
         }
         upload_date = info_dict.get('upload_date')
         if upload_date:
-            # 将日期字符串转换为 datetime 对象
+            # Convert date string to datetime object
             upload_datetime = datetime.strptime(upload_date, '%Y%m%d')
-            # 将 datetime 对象格式化为 ISO 8601 字符串
+            # Format datetime object to ISO 8601 string
             metadata_yt_dlp['published_at'] = upload_datetime.isoformat()
         else:
             metadata_yt_dlp['published_at'] = None
             
         return metadata_yt_dlp
 
-def extract_video_id(video_url):
+def extract_video_id(video_url: str) -> str:
     """
     Extract the video ID from a YouTube video URL.
     
-    Parameters:
-    - video_url : str : The URL of the YouTube video.
+    Args:
+        video_url (str): The URL of the YouTube video.
     
     Returns:
-    - str : The extracted video ID.
+        str: The extracted video ID.
     """
     video_id_match = re.search(r'v=([a-zA-Z0-9_-]+)', video_url)
     if video_id_match:
@@ -114,23 +125,37 @@ def extract_video_id(video_url):
         return None
     
 def main():
+    """
+    Entry point for the script. 
+
+    If a YouTube video URL is provided via the --url parameter, extracts the video ID from the URL, 
+    and retrieves and logs the video metadata using both the YouTube Data API and yt-dlp. 
+
+    Usage:
+    --url <YouTube video URL>: Specify the YouTube video URL to fetch metadata for.
+
+    If no URL is provided, an error message is displayed and the program exits.
+
+    Returns:
+    None
+    """
     print("youtube_metadata_checker.py v1.0.1")
     parser = argparse.ArgumentParser(description="Get metadata from YouTube videos.")
     parser.add_argument('--url', type=str, help="Optional. A specific YouTube video URL.")
     args = parser.parse_args()
     print(args)
     if args.url:
-        video_links = [args.url]  # 如果提供了URL，则只处理该URL
+        video_links = [args.url]  # Process only this URL if provided
     else:
         print("Error: No URL provided. Please provide a YouTube video URL using the --url parameter.")
-        sys.exit(1)  # 退出程序，返回错误代码1
+        sys.exit(1)  # Exit the program, return error code 1
 
     for link in video_links:
         video_id = extract_video_id(link)
         print(f"Video ID: {video_id}")
         if not video_id:
             print(f"Error: Could not extract video ID from URL: {link}")
-            continue  # 跳过当前循环，处理下一个链接
+            continue  # Skip current loop, process the next link
 
         metadata_api = get_metadata_from_api(video_id)
         if not metadata_api:
@@ -142,7 +167,7 @@ def main():
             print(f"Error: Could not get metadata from yt-dlp for video ID: {video_id}")
             continue
 
-        # 整理输出格式
+        # Format output
         logger.info(f"\nMetadata for Video ID: {video_id}")
         logger.info(f"From YouTube Data API:\n{json.dumps(metadata_api, indent=4)}")
         logger.info(f"From yt-dlp:\n{json.dumps(metadata_yt_dlp, indent=4)}")
