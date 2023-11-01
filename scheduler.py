@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 from apscheduler.schedulers.blocking import BlockingScheduler
-from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
+from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR, JobEvent
 
 from utils import sanitize_filename  
 from video_downloader import main as video_downloader_main
@@ -36,7 +36,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument('--test', action='store_true', help="Run the job immediately for testing.")
     return parser.parse_args()
 
-def listener(event: apscheduler.events.JobEvent) -> None:
+def listener(event: JobEvent) -> None:
     """Handles scheduler job events.
 
     Args:
