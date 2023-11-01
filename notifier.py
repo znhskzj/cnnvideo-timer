@@ -1,6 +1,8 @@
-# notifier.py v1.4.1
+"""
+notifier.py v1.4.2
 
-# This script is tasked with sending notification emails. It constructs and sends emails to notify users about the availability of new videos or any errors that might have occurred during the video checking or downloading processes.
+This script is tasked with sending notification emails. It constructs and sends emails to notify users about the availability of new videos or any errors that might have occurred during the video checking or downloading processes.
+"""
 
 import smtplib
 import logging
@@ -18,16 +20,27 @@ logger = logging.getLogger('notifier')
 
 class Notifier:
 
-    def __init__(self):
-        """Initialize the Notifier with configuration loaded from the environment file."""
+    def __init__(self) -> None:
+        """Initialize the Notifier with configuration loaded from the environment file.
+
+        Args:
+        - None
+        
+        Returns:
+        - None
+        """
         self.config = load_config()
         self.retry_count = self.config.get("EMAIL_RETRY_COUNT", 3)  # Load retry count from config or use default
         self.recipients = [email.strip() for email in self.config["SMTP_RECEIVER"].split(',')]
 
-    def send_notification(self, downloaded_videos):
+    def send_notification(self, downloaded_videos: List[str]) -> None:
         """Send an email notification with the titles and sizes of downloaded videos.
-        Parameters:
-        - downloaded_videos : list : A list of paths to the downloaded videos.
+
+        Args:
+        - downloaded_videos (List[str]): A list of paths to the downloaded videos.
+        
+        Returns:
+        - None
         """
 
         message_body = "The following videos have been downloaded:\n\n"
@@ -42,7 +55,16 @@ class Notifier:
         subject = f"New Videos Downloaded on {current_date}"
         self._send_email(subject, message_body)
 
-    def _send_email(self, subject, body):
+    def _send_email(self, subject: str, body: str) -> None:
+        """Send an email with the specified subject and body.
+
+        Args:
+        - subject (str): The subject of the email.
+        - body (str): The body of the email.
+        
+        Returns:
+        - None
+        """
         message = EmailMessage()
         message.set_content(body)
         message['Subject'] = subject
@@ -65,6 +87,7 @@ class Notifier:
                 retries += 1
                 sleep(randint(1, 5))  # Random sleep before retrying
 
+# Usage example
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Send a notification email with video filenames.")
     parser.add_argument('filenames', metavar='filename', type=str, nargs='*',
