@@ -2,8 +2,9 @@
 CNN Video Timer is a tool designed for scheduling the checking and downloading of videos from CNN, with automated link extraction, video downloading, and timed task execution, complemented by email notifications upon download completion. 
 
 ## 功能介绍
-CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它能自动提取视频链接，下载视频，并且可以配置为定时执行这些任务。下载完成后，它还可以通过电子邮件发送通知。
-本项目维护将关闭，解释代码将重构后转入新项目，实现更多功能。
+CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它能自动提取CNN10的英语新闻Youtube视频链接，下载视频，并且可以配置为定时执行这些任务。下载完成后，它还可以通过电子邮件发送通知。
+
+本项目维护将关闭，届时代码将重构后转入新项目，实现更多功能。新项目链接不日将发布。
 
 ## 文件结构（按拼音排序）
 - `baidu_cloud_uploader.py`: 百度云上传模块，负责将下载的视频上传到百度云
