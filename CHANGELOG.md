@@ -1,9 +1,13 @@
 
 # CHANGELOG
+This document provides a high-level log of changes for each version of the project. Each module has a dedicated section that lists the changes in a version-wise manner. For main updates, please refer to the README.md file.
+
 
 ## Detailed Update Logs
 
-### baidu_cloud_uploader.py 1.3.3
+### baidu_cloud_uploader.py 1.3.4
+- **v1.3.4**
+  - 优化了代码结构，提高了日志系统的可配置性。
 - **v1.3.3**
   - 代码重构，增加用户提示等。
 - **v1.0.0**
@@ -38,13 +42,13 @@
 - **v1.0.1**
   - 添加了logger对象和对`extract_video_links_from_page`函数的错误处理。
 
-### metadata_manager.py v1.3.2
+### metadata_manager.py v1.3.3
 - **v1.3.0**
   - 代码更新，增加了更多的错误处理和日志记录。
 - **v1.0.1**
   - 初始版本，用于管理视频的元数据。
 
-### notifier.py v1.4.1
+### notifier.py v1.4.2
 - **v1.4.0**
   - 更新了代码，添加了命令行参数的处理。
 - **v1.1.1**
@@ -93,7 +97,7 @@
   - 重构了代码，将`create_directories`, `setup_logging`, `sanitize_filename`, `extract_video_links_from_page`等函数剥离到`utils.py`。
   - 其他一些小的改进和优化。
 
-### youtube_metadata_checker.py v1.0.1
+### youtube_metadata_checker.py v1.0.2
 - **v1.0.0**
   - 实现youtube API和yt-dlp下载视频元数据。
 
