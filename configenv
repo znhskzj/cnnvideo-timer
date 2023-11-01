@@ -1,5 +1,5 @@
 # 请使用您自己的配置，其中电子邮件设置部分必须更改为自己的设置
-# 更改完成后，将此文件重命名为config.env
+# 设置完成后，将此文件重命名为config.env
 
 # This configuration file centralizes various settings used by the application, such as logging preferences, Youtube settings, download settings, email settings, and scheduled task timings.
 
