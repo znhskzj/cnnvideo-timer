@@ -62,7 +62,6 @@ def load_config(file_path: str = "config.env") -> dict:
         "DEFAULT_METADATA_EXTRACTOR": (str, "yt_dlp"),
         "METADATA_DIRECTORY": (str, "./metadata"),
         "MAX_RESOLUTION": (int, 720)
-        # ... (add other parameters as needed) ...
     }
 
     config = {}
