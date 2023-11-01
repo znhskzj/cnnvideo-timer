@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # File: deploy.sh
-# Version: 1.3.0
+# Version: 1.3.1
 # Description: This script automates the deployment process of the cnnvideo-timer application.
 # It clones the repository, sets up a virtual environment, installs necessary packages,
 # sets the time zone, and schedules the application to run daily.
