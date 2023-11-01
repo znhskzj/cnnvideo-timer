@@ -1,5 +1,8 @@
-# link_extractor.py v1.4.1
+"""
+link_extractor.py v1.4.1
 
+This module extracts video links from a specified webpage. 
+"""
 import requests
 import re
 import logging
@@ -12,11 +15,20 @@ config = load_config()
 class VideoLinkExtractor:
     
     @staticmethod
-    def extract_video_links_from_page(url=None, max_links=None, video_pattern=None, base_url=None, timeout=None) -> list:
+    def extract_video_links_from_page(url=None, max_links=None, video_pattern=None, 
+                                      base_url=None, timeout=None) -> list:
         """
         Extract video links from a webpage.
 
-        Parameters are loaded from configuration if not provided.
+        Args:
+        - url (str): The URL of the webpage to extract video links from. Defaults to config["YOUTUBE_URL"].
+        - max_links (int): The maximum number of links to extract. Defaults to config["MAX_VIDEOS_TO_DOWNLOAD"].
+        - video_pattern (str): The regex pattern to match video links. Defaults to config["YOUTUBE_VIDEO_PATTERN"].
+        - base_url (str): The base URL to prepend to relative video links. Defaults to config["YOUTUBE_BASE_URL"].
+        - timeout (float): The timeout for the HTTP request in seconds. Defaults to config.get("REQUEST_TIMEOUT", 10).
+
+        Returns:
+        - list: A list of extracted video links, or an empty list if an error occurs.
         """
         url = url or config["YOUTUBE_URL"]
         max_links = max_links or config["MAX_VIDEOS_TO_DOWNLOAD"]
@@ -24,7 +36,7 @@ class VideoLinkExtractor:
         base_url = base_url or config["YOUTUBE_BASE_URL"]
         timeout = timeout or config.get("REQUEST_TIMEOUT", 10)
 
-        # 确保 max_links 是整数
+        # Ensure max_links is an integer
         if not isinstance(max_links, int):
             try:
                 max_links = int(max_links)
