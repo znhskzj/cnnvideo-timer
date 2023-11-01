@@ -1,13 +1,13 @@
-
 # CNN Video Timer
+CNN Video Timer is a tool designed for scheduling the checking and downloading of videos from CNN, with automated link extraction, video downloading, and timed task execution, complemented by email notifications upon download completion. 
 
 ## 功能介绍
 CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它能自动提取视频链接，下载视频，并且可以配置为定时执行这些任务。下载完成后，它还可以通过电子邮件发送通知。
 本项目维护将关闭，解释代码将重构后转入新项目，实现更多功能。
 
-## 文件结构
-- `CHANGELOG.md`: 各文件次要版本更新记录
+## 文件结构（按拼音排序）
 - `baidu_cloud_uploader.py`: 百度云上传模块，负责将下载的视频上传到百度云
+- `CHANGELOG.md`: 各文件次要版本更新记录
 - `config_loader.py`: 配置加载模块，负责加载和验证环境配置
 - `configenv`: 参考配置文件，需要更名并设置相应的参数
 - `deploy.sh`: linux ubuntu安装脚本，用于自动部署项目
@@ -31,7 +31,8 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它�
 
 ## 依赖
 - Python 3
-- 其他 Python 库：请参考 `requirements.txt` 文件
+- FFmpeg，请下载后放在本项目的bin子目录中
+- 其他 Python 库：apscheduler, python-dotenv, requests, yt_dlp，具体请参考 `requirements.txt` 文件
 
 ## 如何使用
 ### Windows
@@ -50,6 +51,9 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它�
 如果需要手工部署，请确保 deploy.sh 脚本有执行权限。可以使用如下命令进行检查和设置：
 chmod +x deploy.sh
 
+## 常见问题
+- linux下的安装问题请查看FAQ.md文档。
+
 ## 贡献
 如有任何问题或建议，或想要参与项目贡献，可以通过邮件方式联系我们，或在项目中提出 Issue 或 Pull Request。
 
@@ -57,7 +61,7 @@ chmod +x deploy.sh
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 风险提示
-使用此工具时，请遵守相关法律法规，并尊重版权。
+使用此工具和下载使用视频时，请遵守相关法律法规，以及视频原创者的使用条款和条件，并尊重版权。
 
 ## 联系信息
 如有任何问题或建议，请发邮件：admin@zhurong.link
