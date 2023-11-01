@@ -1,7 +1,7 @@
-#  video_downloader.py version 1.9.1
-
-# "This module automatically downloads the latest CNN10 video using yt-dlp, ensuring titles are sanitized and saved to the designated directory."
-# -*- coding: utf-8 -*-
+"""
+video_downloader.py version 1.9.1
+This module automatically downloads the latest CNN10 video using yt-dlp, ensuring titles are sanitized and saved to the designated directory.
+"""
 
 # Standard library imports
 import os
@@ -17,10 +17,10 @@ from downloader_checker import DownloaderManager
 from utils import setup_logging, create_directories, sanitize_filename
 from link_extractor import VideoLinkExtractor
 from metadata_manager import MetadataManager  
-from baidu_cloud_uploader import BaiduCloudUploader
+# from baidu_cloud_uploader import BaiduCloudUploader
 
 
-# 加载配置文件
+# Load configuration file
 config = load_config()
 
 # Set up a logger for this module
@@ -30,7 +30,7 @@ class YTDownloader:
     def __init__(self, output_directory=None):
         """Initialize the YTDownloader with an output directory.
 
-        Parameters:
+        Args:
         - output_directory : str : The directory where the downloaded videos will be saved.
         """
         if not output_directory:
@@ -40,11 +40,18 @@ class YTDownloader:
         self.setup_youtube_downloader()
 
     def setup_youtube_downloader(self):
-        """Setup the yt-dlp downloader with necessary options."""
+        """Setup the yt-dlp downloader with necessary options.
+    
+        Args:
+            self (YTDownloader): An instance of YTDownloader.
+
+        Returns:
+            None
+        """
         yt_dlp.utils.std_headers['User-Agent'] = "Mozilla/5.0 ..."
         self.ydl_opts = {
             # 'format': f'best[height<=720][ext={config["VIDEO_EXTENSION"]}]',  # Using VIDEO_EXTENSION from config
-            'format': '18',  # Using VIDEO_EXTENSION from config
+            'format': '18', # 640*360 mp4 avc1.42001E, about 34MB
             'outtmpl': os.path.join(self.output_directory, '%(title)s.%(ext)s'),
             'quiet': True,
             'no_progress': True,
@@ -55,18 +62,24 @@ class YTDownloader:
 
     def hook(self, d):
         """Hook function to handle download progress.
-        Parameters:
+
+        Args:
         - d : dict : A dictionary containing information about the download process such as 'status', '_percent_str', '_total_bytes_str', and '_speed_str'.
+        
+        Returns:
+        - None
         """
         if d['status'] == 'downloading':
             print(f"\r[download] {d['_percent_str']} of {d['_total_bytes_str']} at {d['_speed_str']}", end='', flush=True)
         elif d['status'] == 'finished':
-            print("")  # 打印一个新行，以便在下载完成后将光标移至新行
+            print("")  # Print a new line to move the cursor to a new line after download is finished
         
     def get_video_info(self, video_url):
         """Get video information without downloading the video.
-        Parameters:
+        
+        Args:
         - video_url : str : The URL of the video to extract information from.
+        
         Returns:
         - dict : A dictionary containing various pieces of information about the video such as 'title', 'uploader', 'upload_date', etc.
         """
@@ -74,8 +87,10 @@ class YTDownloader:
 
     def download_video(self, video_url):
         """Download the video and save it to the specified directory.
-        Parameters:
+        
+        Args:
         - video_url : str : The URL of the video to be downloaded.
+        
         Returns:
         - None : This method returns None. It downloads the video and saves it to the specified directory.
         """
@@ -88,9 +103,13 @@ class YTDownloader:
 
 def display_metadata(last_downloaded_titles, config):
     """Display metadata of the downloaded videos.
-    Parameters:
+    
+    Args:
     - last_downloaded_titles : list of str : A list of titles of the videos that were downloaded in the last run.
     - config : dict : A configuration dictionary containing various settings and parameters used throughout the script.
+    
+    Returns:
+    - None
     """
     mm = MetadataManager(config)
     videos_metadata = mm.get_all_metadata()
@@ -109,6 +128,7 @@ def main():
     """
     Main function that orchestrates the video downloading process.
     It extracts video links, downloads videos, and uploads them to Baidu Netdisk.
+    
     Returns:
     - list : A list containing the filenames of the videos that were successfully downloaded.
     """
@@ -127,7 +147,9 @@ def main():
     checker = DownloaderManager(videos, downloader, config)
     logger.info("Starting the checking and downloading process.")
     downloaded_filenames = checker.check_and_download()  
-    # uploader = BaiduCloudUploader()  # 创建 BaiduCloudUploader 的实例
+    # Instantiate BaiduCloudUploader
+    # uploader = BaiduCloudUploader()  
+    # Temporarily disabling Baidu Netdisk upload feature, to be enhanced in future versions.
     # if downloaded_filenames:
         # for filename in downloaded_filenames:
             # video_path = os.path.join(config["DOWNLOAD_PATH"], filename)
