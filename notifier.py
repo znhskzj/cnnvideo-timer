@@ -13,6 +13,7 @@ import datetime
 from email.message import EmailMessage
 from time import sleep
 from random import randint
+from typing import List
 from config_loader import load_config
 
 # Set up a logger for this module
