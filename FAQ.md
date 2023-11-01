@@ -1,4 +1,4 @@
-## 常见问题解答 (FAQ)
+## 常见问题解答 (FAQ)（主要是Linux系统的相关命令）
 
 ### 1. **如何升级 VPS 上的 Python 版本？**
 
@@ -33,7 +33,7 @@
 
    您可以使用 `crontab -e` 命令编辑 cron 表，并添加以下行来安排定时任务：
    ```bash
-   0 0 * * * cd /path_to_your_project && ./venv/bin/python3 scheduler.py >> cron.log 2>&1
+   0 20 * * * cd /path_to_your_project && ./venv/bin/python3 scheduler.py >> cron.log 2>&1
    ```
 
 ### 5. **如何查看 cron 任务的日志？**
@@ -68,6 +68,7 @@
    如果激活了虚拟环境，命令提示符前应该会显示 `(venv)`。
 
 ### 8. **其它相关命令**
+   以下username，your_email@example，your_ipaddress均需要替换为你自己的真实信息
 
    查看当前日期和时间：date
    查看有登录权限的用户：getent passwd | grep "/home" | cut -d: -f1
@@ -75,16 +76,15 @@
    查看现在哪个目录：pwd
    访问.ssh目录，没有则创建：cd .ssh || mkdir .ssh && cd .ssh
    查看具体文件的权限：ls -l ~/.ssh/gh-actions
-   更改文件所有者和组：sudo chown zhurong:zhurong ~/.ssh/gh-actions
+   更改文件所有者和组：sudo chown username:username ~/.ssh/gh-actions
    更改文件权限：chmod 600 ~/.ssh/gh-actions
-   root用户切换到zhurong用户：su - zhurong
-   zhurong用户退回root用户：exit
-   root用户更改zhurong用户密码：passwd zhurong
+   root用户切换到username用户：su - username
+   username用户退回root用户：exit
+   root用户更改username用户密码：passwd username
    测试SSH连接：ssh -T git@github.com
-   本地增加私钥命令（email要换）：ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f github-key
-   本地验证vps连接：ssh -i path/to/your/private/key zhurong@74.48.63.73
-   github端可能需要金庸主机密钥检查
-   如何在虚拟环境中安装项目依赖：pip install -r requirements.txt
+   本地增加私钥命令：ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f github-key
+   本地验证vps连接：ssh -i path/to/your/private/key usernameg@your_ipaddress
+   github端可能需要禁用主机密钥检查
 
 
 
