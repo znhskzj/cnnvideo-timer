@@ -1,6 +1,9 @@
-# baidu_cloud_uploader.py v1.3.3
-
-# Module for uploading files to Baidu Netdisk using the Baidu Cloud API, handling tasks such as pre-creating upload tasks, uploading file slices, and merging slices to complete the upload.
+# baidu_cloud_uploader.py v1.3.4
+"""
+Module for uploading files to Baidu Netdisk using the Baidu Cloud API,
+handling tasks such as pre-creating upload tasks, uploading file slices,
+and merging slices to complete the upload.
+"""
 
 import os
 import sys
@@ -11,23 +14,25 @@ import logging
 import urllib3
 from tqdm import tqdm
 from dotenv import load_dotenv
+from utils import setup_logging
 
 class BaiduCloudUploader:
-    def __init__(self, config_path='./config.env'):
+    def __init__(self, config_path: str = './config.env') -> None:
         """
         Initializes the uploader with access token and app name.
+        
+        Args:
+        - config_path : str : Path to the configuration file (default is './config.env').
         """
+        # Load environment variables from the config.env file
+        load_dotenv(dotenv_path=config_path)
+        setup_logging()
+        self.logger = logging.getLogger('baidu_cloud_uploader')
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         
         # Load environment variables from the config.env file
         load_dotenv(dotenv_path=config_path)
-        
-        # Configure logging
-        self.logger = logging.getLogger('baidu_cloud_uploader')
-        logging.basicConfig(filename='log/video_upload.log', 
-                            level=logging.INFO, 
-                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        )        
+                
         self.access_token = os.getenv('BAIDU_ACCESS_TOKEN')
         self.app_name = os.getenv('BAIDU_APP_NAME')
         
@@ -35,24 +40,51 @@ class BaiduCloudUploader:
             self._log_error('ACCESS_TOKEN or APP_NAME is missing in the configuration file.')
             raise ValueError("ACCESS_TOKEN or APP_NAME is missing in the configuration file.")
 
-    def _log_info(self, message):
+    def _log_info(self, message: str) -> None:
         """
         Log info messages with a consistent format.
+
+        Args:
+        - message : str : Message to be logged.
         """
         self.logger.info(message)
         print(message)
 
-    def _log_error(self, message):
+    def _log_error(self, message: str) -> None:
         """
         Log error messages with a consistent format.
+        
+        Args:
+        - message : str : Error message to be logged.
         """
         self.logger.error(message)
         print(f"ERROR: {message}")
 
+    def send_request(self, url: str, method: str, headers: dict = None, params: dict = None, data: dict = None) -> dict:
+        """
+        Send an HTTP request and return the response.
+
+        Args:
+        - url : str : The URL to send the request to.
+        - method : str : The HTTP method to use ('GET', 'POST', etc.).
+        - headers : dict : (Optional) HTTP headers to include with the request.
+        - params : dict : (Optional) URL parameters to include with the request.
+        - data : dict : (Optional) Data to include with a POST request.
+
+        Returns:
+        - dict : The JSON response from the server.
+        """
+        if method == "POST":
+            response = requests.post(url, headers=headers, params=params, data=data, files=files, verify=False)
+        else:
+            response = requests.get(url, headers=headers, params=params, data=data, verify=False)
+        return response.json()  # Assuming the response is already in JSON format
+
     def precreate_file(self, file_path, file_size, block_list):
         """
         Precreate the file on Baidu Netdisk.
-        Parameters:
+        
+        Args:
         - file_path : str : Path to the file to be uploaded.
         - file_size : int : Size of the file to be uploaded.
         - block_list : list : List of MD5 hashes of the file blocks.
@@ -74,7 +106,7 @@ class BaiduCloudUploader:
             "block_list": json.dumps(block_list)
         }
 
-        logging.info(f"Sending POST request to: {url}")
+        self.logger.info(f"Sending POST request to: {url}")
         response = requests.post(url, headers=headers, params=params, data=data, verify=False)
         return response.json()  # Assuming the response is already in JSON format
 
@@ -83,7 +115,7 @@ class BaiduCloudUploader:
         """
         Upload a single slice of the file.
 
-        Parameters:
+        Args:
         - file_path : str : Path to the file being uploaded.
         - upload_id : str : Upload ID received from the precreate step.
         - partseq : int : Sequence number of the part being uploaded.
@@ -118,7 +150,7 @@ class BaiduCloudUploader:
         """
         Finalize the file upload by merging all slices.
 
-        Parameters:
+        Args:
         - file_path : str : Path to the file being uploaded.
         - upload_id : str : Upload ID received from the precreate step.
         - file_size : int : Total size of the file.
@@ -141,7 +173,7 @@ class BaiduCloudUploader:
             "block_list": json.dumps(block_list)
         }
 
-        logging.info(f"Sending POST request to: {url}")
+        self.logger.info(f"Sending POST request to: {url}")
         response = requests.post(url, headers=headers, params=params, data=data)
         response_json = response.json()
 
@@ -156,7 +188,7 @@ class BaiduCloudUploader:
         """
         Upload slices of the file with a progress bar.
 
-        Parameters:
+        Args:
         - file_path : str : Path to the file being uploaded.
         - upload_id : str : Upload ID received from the precreate step.
         - total_slices : int : Total number of slices.
@@ -173,19 +205,18 @@ class BaiduCloudUploader:
                 except Exception as e:
                     self._log_error(f"Error uploading slice {i+1}/{total_slices}: {e}")
 
-    def upload_file(self, file_path):
+    def upload_file(self, file_path, block_size=4 * 1024 * 1024):
         """
         Handle the entire file upload process.
 
         
-        Parameters:
+        Args:
         - file_path : str : Path to the file being uploaded.
+        - block_size : int : Size of each block (default is 4MB).
 
         Returns:
         - dict : Response from the server after the file creation step.
         """
-        # self._log_info(f'Starting to upload file: {file_path}')
-        block_size = 4 * 1024 * 1024  # 4MB
         file_size = os.path.getsize(file_path)
 
         # Calculate MD5 for each block
@@ -210,17 +241,15 @@ class BaiduCloudUploader:
 
         # Create file
         create_response = self.create_file(file_path, upload_id, file_size, block_list)
-        # self._log_info(f"File created successfully: {file_path}")
         
         return create_response
 
-# 保留作为一个独立脚本运行的功能
 if __name__ == "__main__":
     uploader = BaiduCloudUploader()
     if len(sys.argv) != 2:
-        uploader._log_error('Incorrect number of arguments')
+        uploader.self._log_error('Incorrect number of arguments')
         print("Usage: python baidu_cloud_uploader.py <FILE_PATH>")
         sys.exit(1)
     
-    file_path_to_upload = sys.argv[1]  # 从命令行参数获取文件路径
+    file_path_to_upload = sys.argv[1]  # Get file path from command line arguments
     uploader.upload_file(file_path_to_upload)
