@@ -127,11 +127,11 @@ def main():
     checker = DownloaderManager(videos, downloader, config)
     logger.info("Starting the checking and downloading process.")
     downloaded_filenames = checker.check_and_download()  
-    uploader = BaiduCloudUploader()  # 创建 BaiduCloudUploader 的实例
-    if downloaded_filenames:
-        for filename in downloaded_filenames:
-            video_path = os.path.join(config["DOWNLOAD_PATH"], filename)
-            uploader.upload_file(video_path) 
+    # uploader = BaiduCloudUploader()  # 创建 BaiduCloudUploader 的实例
+    # if downloaded_filenames:
+        # for filename in downloaded_filenames:
+            # video_path = os.path.join(config["DOWNLOAD_PATH"], filename)
+            # uploader.upload_file(video_path) 
 
     logger.info("Script finished.")
     return downloaded_filenames  # Modified to return downloaded filenames
