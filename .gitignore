@@ -1,4 +1,4 @@
-# gitignore v1.0.2
+# gitignore v1.0.3
 # 排除文件和目录
 # 20231020 增加排除当前目录下的videos,log,bin,tmp,metadata目录
 # 20231024 增加排除当前目录下的密钥文件：gh-actions,gh-actions.pub文件
@@ -13,4 +13,6 @@ gh-actions.pub
 /tmp/
 /metadata/
 /.github/
-/__pycache__/
+__pycache__/
+*.pyc
+
