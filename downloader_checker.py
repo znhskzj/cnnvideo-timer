@@ -12,7 +12,6 @@ from utils import sanitize_filename
 from config_loader import load_config
 from metadata_manager import MetadataManager
 
-# 创建一个logger对象
 logger = logging.getLogger(__name__)
 
 config = load_config()
@@ -51,7 +50,7 @@ class DownloaderManager:
         sanitized_title = sanitize_filename(video_info['title'])
         video_path = os.path.join(self.downloader.output_directory, sanitized_title + '.mp4')
         metadata = {
-            'id': video_info['id'],  # 假设 video_info 包含一个唯一的 'id' 字段
+            'id': video_info['id'], 
             'title': video_info['title'],
             'url': video_info['url'],
             'description': video_info['description'],
