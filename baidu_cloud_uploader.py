@@ -17,7 +17,8 @@ from dotenv import load_dotenv
 from utils import setup_logging
 
 class BaiduCloudUploader:
-    def __init__(self, config_path: str = './config.env') -> None:
+    def __init__(self, file_path=None, config_path: str = './config.env') -> None:
+    
         """
         Initializes the uploader with access token and app name.
         
@@ -36,6 +37,11 @@ class BaiduCloudUploader:
         if not self.access_token or not self.app_name:
             self._log_error('ACCESS_TOKEN or APP_NAME is missing in the configuration file.')
             raise ValueError("ACCESS_TOKEN or APP_NAME is missing in the configuration file.")
+        
+        if not file_path:
+            self._log_error('Incorrect number of arguments')  # Log error to the logfile
+            print("Usage: python baidu_cloud_uploader.py <FILE_PATH>")
+            sys.exit(1)
 
     def _log_info(self, message: str) -> None:
         """
@@ -45,7 +51,7 @@ class BaiduCloudUploader:
         - message : str : Message to be logged.
         """
         self.logger.info(message)
-        print(message)
+        # print(message)
 
     def _log_error(self, message: str) -> None:
         """
@@ -55,7 +61,7 @@ class BaiduCloudUploader:
         - message : str : Error message to be logged.
         """
         self.logger.error(message)
-        print(f"ERROR: {message}")
+        # print(f"ERROR: {message}")
 
     def send_request(self, url: str, method: str, headers: dict = None, params: dict = None, data: dict = None, files: dict = None) -> dict:
         """
@@ -125,8 +131,8 @@ class BaiduCloudUploader:
         url = f"https://d.pcs.baidu.com/rest/2.0/pcs/superfile2?method=upload&access_token={self.access_token}"
         
         with open(file_path, "rb") as f:
-            f.seek(partseq * block_size)  # 定位到该片的起始位置
-            file_slice = f.read(block_size)  # 读取文件片
+            f.seek(partseq * block_size)     # Seek to the start of the slice
+            file_slice = f.read(block_size)  # Read the slice from the file
 
         params = {
             "type": "tmpfile",
@@ -243,11 +249,17 @@ class BaiduCloudUploader:
         return create_response
 
 if __name__ == "__main__":
-    uploader = BaiduCloudUploader()
-    if len(sys.argv) != 2:
-        uploader._log_error('Incorrect number of arguments')
-        print("Usage: python baidu_cloud_uploader.py <FILE_PATH>")
-        sys.exit(1)
-    
-    file_path_to_upload = sys.argv[1]  # Get file path from command line arguments
-    uploader.upload_file(file_path_to_upload)
+    """
+    If this module is run directly, it will upload the file specified in the command line arguments.
+    If the number of arguments is incorrect, it will print the usage instructions.
+
+    Args:
+    - sys.argv[1] : str : Path to the file to be uploaded.
+
+    Returns:
+    - None
+    """
+    file_path_to_upload = sys.argv[1] if len(sys.argv) == 2 else None
+    uploader = BaiduCloudUploader(file_path=file_path_to_upload)
+    if file_path_to_upload:
+        uploader.upload_file(file_path_to_upload)
