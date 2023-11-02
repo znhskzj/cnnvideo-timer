@@ -15,4 +15,3 @@ gh-actions.pub
 /.github/
 __pycache__/
 *.pyc
-
