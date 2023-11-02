@@ -65,7 +65,7 @@ def setup_logging() -> NoReturn:
     
     # Set up logging for console
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
+    console_handler.setLevel(logging.ERROR)
     console_formatter = logging.Formatter('%(levelname)s: %(message)s')
     console_handler.setFormatter(console_formatter)
     root_logger.addHandler(console_handler)
