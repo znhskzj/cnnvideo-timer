@@ -121,13 +121,12 @@ class DownloaderManager:
                     print(f"Downloading: {video_info['title']}")
                     self.downloader.download_video(video_url)
                     self.store_video_metadata(video_info)
-                    # logger.info(f"Successfully downloaded {video_info['title']}.")
-                    
                     sanitized_title = sanitize_filename(video_info['title']) + config["VIDEO_EXTENSION"]
                     return video_info['title'], sanitized_title  # Return the title and filename of the downloaded video
-
-                logger.info(f"Video {video_info['title']} already exists. Skipping download.")
-                return None, None  # Return None if the video was not downloaded
+                else:
+                    logger.info(f"Video {video_info['title']} already exists. Skipping download.")
+                    print(f"Video {video_info['title']} already exists. Skipping download.")
+                    return None, None  # Return None if the video was not downloaded
 
             except Exception as e:
                 retries += 1
