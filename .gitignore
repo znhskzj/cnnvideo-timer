@@ -5,6 +5,7 @@
 *.env
 *.log
 *.mp4
+*.bat
 gh-actions
 gh-actions.pub
 /videos/
