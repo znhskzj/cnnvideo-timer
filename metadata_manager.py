@@ -37,6 +37,12 @@ class MetadataManager:
         if video_id:
             all_metadata = self.get_all_metadata()
             all_metadata[video_id] = metadata
+            # Get the directory of the metadata file
+            metadata_dir = os.path.dirname(self.metadata_file_path)
+            
+            # Check if the directory exists, if not create it
+            if not os.path.exists(metadata_dir):
+                os.makedirs(metadata_dir)
             with open(self.metadata_file_path, 'w', encoding='utf-8') as file:
                 json.dump(all_metadata, file, ensure_ascii=False, indent=4)
 
