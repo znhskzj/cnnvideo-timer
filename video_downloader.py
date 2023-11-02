@@ -132,6 +132,13 @@ def main():
     Returns:
     - list : A list containing the filenames of the videos that were successfully downloaded.
     """
+
+    # Check if config.env file exists
+    if not os.path.exists('config.env'):
+        print("Error: config.env file not found.")
+        print("Please copy configenv to config.env and configure it for your environment.")
+        exit(1)
+        
     # Setup logging and directories
     setup_logging()
     create_directories()
