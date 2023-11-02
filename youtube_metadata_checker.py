@@ -23,6 +23,12 @@ config = load_config()
 
 API_KEY = config["YOUTUBE_API_KEY"]
 
+class CustomArgumentParser(argparse.ArgumentParser):
+    def error(self, message):
+        sys.stderr.write(f'Error: {message}\n')
+        self.print_help()
+        sys.exit(2)
+
 def get_metadata_from_api(video_id: str) -> dict:
     """
     Get metadata from YouTube Data API.
@@ -139,16 +145,17 @@ def main():
     Returns:
     None
     """
-    print("youtube_metadata_checker.py v1.0.1")
-    parser = argparse.ArgumentParser(description="Get metadata from YouTube videos.")
-    parser.add_argument('--url', type=str, help="Optional. A specific YouTube video URL.")
+    parser = CustomArgumentParser(
+        description='Get metadata from YouTube videos.',
+        usage='%(prog)s --url "<youtube-url>"'
+    )
+    parser.add_argument('--url', type=str, help="A specific YouTube video URL enclosed in double quotes.")
     args = parser.parse_args()
-    print(args)
-    if args.url:
-        video_links = [args.url]  # Process only this URL if provided
-    else:
-        print("Error: No URL provided. Please provide a YouTube video URL using the --url parameter.")
-        sys.exit(1)  # Exit the program, return error code 1
+    
+    if not args.url:
+        parser.error("No URL provided. Please provide a YouTube video URL using the --url parameter.")
+
+    video_links = [args.url]  # Process only this URL if provided
 
     for link in video_links:
         video_id = extract_video_id(link)
@@ -169,8 +176,8 @@ def main():
 
         # Format output
         logger.info(f"\nMetadata for Video ID: {video_id}")
-        logger.info(f"From YouTube Data API:\n{json.dumps(metadata_api, indent=4)}")
-        logger.info(f"From yt-dlp:\n{json.dumps(metadata_yt_dlp, indent=4)}")
+        logger.info(f"From YouTube Data API:\n{json.dumps(metadata_api, indent=4, ensure_ascii=False)}")
+        logger.info(f"From yt-dlp:\n{json.dumps(metadata_yt_dlp, indent=4, ensure_ascii=False)}")
 
 if __name__ == "__main__":
     main()
