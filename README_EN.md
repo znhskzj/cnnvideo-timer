@@ -41,7 +41,7 @@ Please refer to the `CHANGELOG.md` file for a detailed update log.
 ## How to Use
 ### Windows
 #### Method One (Recommended)
-1. Direct Download: https://github.com/znhskzj/cnnvideo-timer/releases/v0.9.1/releaseffmpeg.zip
+1. Direct Download: https://github.com/znhskzj/cnnvideo-timer/releases/download/v0.9.1/releaseffmpeg.zip
 2. Create a new directory locally, and unzip the file above.
 3. Execute the install.bat script (for Windows 10 and above users, if below Windows 10, install unzip software and refer to Method Two below).
 
