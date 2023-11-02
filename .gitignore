@@ -6,6 +6,7 @@
 *.log
 *.mp4
 *.bat
+version.txt
 gh-actions
 gh-actions.pub
 /videos/
