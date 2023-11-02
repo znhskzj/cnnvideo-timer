@@ -39,7 +39,7 @@ class BaiduCloudUploader:
             raise ValueError("ACCESS_TOKEN or APP_NAME is missing in the configuration file.")
         
         if not file_path:
-            self._log_error('Incorrect number of arguments')  # Log error to the logfile
+            self._log_info("Usage: python baidu_cloud_uploader.py <FILE_PATH>")  
             print("Usage: python baidu_cloud_uploader.py <FILE_PATH>")
             sys.exit(1)
 
