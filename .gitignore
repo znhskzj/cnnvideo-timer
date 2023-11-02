@@ -5,7 +5,7 @@
 *.env
 *.log
 *.mp4
-*.bat
+build.bat
 version.txt
 gh-actions
 gh-actions.pub
