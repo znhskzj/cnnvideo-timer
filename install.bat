@@ -38,7 +38,17 @@ if errorlevel 1 (
     exit /b 1
 )
 
-:: Step 4: Inform the user
+:: Step 4: Rename configenv to config.env
+echo Renaming configenv to config.env...
+rename configenv config.env
+
+:: Check if configenv was renamed successfully
+if errorlevel 1 (
+    echo Failed to rename configenv. Aborting.
+    exit /b 1
+)
+
+:: Step 5: Inform the user
 echo Installation completed successfully.
 echo You can now run cnn10vd.exe to download videos.
 
