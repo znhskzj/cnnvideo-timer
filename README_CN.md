@@ -40,23 +40,23 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它�
 
 ## 如何使用
 ### Windows
-#### 程序员同学
-1. 请至https://github.com/znhskzj/cnnvideo-timer下载源码。
-2. 将configenv改名为config.env后进行参数配置。
-3. 各种花式使用，可以实现实时下载，计划下载，下载多个视频，更换其它新闻频道下载，更换下载文件规格，查看youtube视频元数据，上传百度云盘等功能。
-4. 欢迎star、fork和pr。
-
-#### 一般用户（方法一，推荐）
+#### 方法一（推荐）
 1. 直接下载：https://github.com/znhskzj/cnnvideo-timer/releases/v0.9.1/releaseffmpeg.zip
 2. 在本地新建一个目录，将上述文件解压缩。
 3. 执行install.bat脚本（windows10以上用户，如果windows10以下，需要自行安装解压缩软件并参照以下方法二）。
 
-#### 一般用户（方法二）
+#### 方法二
 1. 在https://github.com/znhskzj/cnnvideo-timer的仓库中，release页面下载最新版本。
 2. 没有下载过ffmpeg.exe的，请下载releaseffmpeg.zip。
 3. 解压至单独的工作目录，创建bin子目录，将ffmpeg.exe放入该子目录，将该目录添加到系统环境的path中。
 4. 将configenv改名为config.env。
 5. 执行cnn10vd.exe文件，视频文件会下载到当前目录的video子目录中。
+
+#### 程序员同学
+1. 请至https://github.com/znhskzj/cnnvideo-timer下载源码。
+2. 将configenv改名为config.env后进行参数配置。
+3. 各种花式使用，可以实现实时下载，计划下载，下载多个视频，更换其它新闻频道下载，更换下载文件规格，查看youtube视频元数据，上传百度云盘等功能。
+4. 欢迎star、fork和pr。
 
 ### Mac 和 Linux
 1. 确保已安装 Python。
