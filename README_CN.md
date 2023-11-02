@@ -41,7 +41,7 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它�
 ## 如何使用
 ### Windows
 #### 方法一（推荐）
-1. 直接下载：https://github.com/znhskzj/cnnvideo-timer/releases/v0.9.1/releaseffmpeg.zip
+1. 直接下载：https://github.com/znhskzj/cnnvideo-timer/releases/download/v0.9.1/releaseffmpeg.zip
 2. 在本地新建一个目录，将上述文件解压缩。
 3. 执行install.bat脚本（windows10以上用户，如果windows10以下，需要自行安装解压缩软件并参照以下方法二）。
 
