@@ -35,17 +35,17 @@ if not exist install.bat (
     exit /b 1
 )
 
-if not exist run_videodownload.bat (
-    echo install.bat does not exist in the working directory. Aborting.
-    exit /b 1
-)
+@REM if not exist run_videodownload.bat (
+@REM     echo run_videodownload does not exist in the working directory. Aborting.
+@REM     exit /b 1
+@REM )
 
 :: Move config.env, configenv, and install.bat to the backup directory
 echo Moving config.env, configenv, and install.bat to the backup directory...
 move config.env %BACKUP_DIR%
 move configenv %BACKUP_DIR%
 move install.bat %BACKUP_DIR%
-move run_videodownload.bat %BACKUP_DIR%
+@REM move run_videodownload.bat %BACKUP_DIR%
 
 
 :: Check the move operation success
@@ -68,7 +68,7 @@ echo Restoring config files to working directory...
 move "%BACKUP_DIR%\config.env" ".\"
 move "%BACKUP_DIR%\configenv" ".\"
 move "%BACKUP_DIR%\install.bat" ".\"
-move "%BACKUP_DIR%\run_videodownload.bat" ".\"
+@REM move "%BACKUP_DIR%\run_videodownload.bat" ".\"
 
 echo Build process completed successfully.
 
@@ -77,7 +77,7 @@ set CONFIGENV_PATH=%WORK_DIR%\configenv
 set INSTALL_PATH=%WORK_DIR%\install.bat
 set EXE_PATH=%WORK_DIR%\dist\cnn10vd.exe
 set FFMPEG_PATH=%WORK_DIR%\bin\ffmpeg.exe
-set RUN_VIDEODOWNLOAD=%WORK_DIR%\run_videodownload.bat
+@REM set RUN_VIDEODOWNLOAD=%WORK_DIR%\run_videodownload.bat
 
 :: Define the name of the zip file and second zip file
 set ZIP_FILE=%BACKUP_DIR%\release.zip
@@ -103,17 +103,18 @@ if not exist %FFMPEG_PATH% (
     echo The ffmpeg executable file does not exist. Aborting.
     exit /b 1
 )
-:: Check if the run_videodownload executable file exists
-if not exist %RUN_VIDEODOWNLOAD% (
-    echo The run_videodownload bat file does not exist. Aborting.
-    exit /b 1
-)
+@REM :: Check if the run_videodownload executable file exists
+@REM if not exist %RUN_VIDEODOWNLOAD% (
+@REM     echo The run_videodownload bat file does not exist. Aborting.
+@REM     exit /b 1
+@REM )
 
 :: Create the zip file
 echo Creating zip file...
 :: Add a delay to ensure the file is no longer in use
 timeout /t 5
-powershell -command "Compress-Archive -Path '%CONFIGENV_PATH%','%INSTALL_PATH%','%EXE_PATH%','%RUN_VIDEODOWNLOAD%' -DestinationPath '%ZIP_FILE%' -Force"
+@REM powershell -command "Compress-Archive -Path '%CONFIGENV_PATH%','%INSTALL_PATH%','%EXE_PATH%','%RUN_VIDEODOWNLOAD%' -DestinationPath '%ZIP_FILE%' -Force"
+powershell -command "Compress-Archive -Path '%CONFIGENV_PATH%','%INSTALL_PATH%','%EXE_PATH%' -DestinationPath '%ZIP_FILE%' -Force"
 
 :: Check the powershell operation success
 if errorlevel 1 (
@@ -127,7 +128,8 @@ echo Zip file created successfully at %ZIP_FILE%.
 echo Creating second zip file...
 :: Add a delay to ensure the file is no longer in use
 timeout /t 5
-powershell -command "Compress-Archive -Path '%FFMPEG_PATH%', '%CONFIGENV_PATH%','%INSTALL_PATH%','%EXE_PATH%','%RUN_VIDEODOWNLOAD%' -DestinationPath '%RELEASEFFMPEG_ZIP%' -Force"
+@REM powershell -command "Compress-Archive -Path '%FFMPEG_PATH%', '%CONFIGENV_PATH%','%INSTALL_PATH%','%EXE_PATH%','%RUN_VIDEODOWNLOAD%' -DestinationPath '%RELEASEFFMPEG_ZIP%' -Force"
+powershell -command "Compress-Archive -Path '%FFMPEG_PATH%', '%CONFIGENV_PATH%','%INSTALL_PATH%','%EXE_PATH%' -DestinationPath '%RELEASEFFMPEG_ZIP%' -Force"
 
 :: Check the Compress-Archive operation success
 if errorlevel 1 (
