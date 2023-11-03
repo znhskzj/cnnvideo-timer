@@ -41,8 +41,8 @@ BAIDU_APP_NAME=XXXXXXXXXXXXXXXXXXXXXXXXXX                                       
 BAIDU_ACCESS_TOKEN='xxx.XXXXXXXXXXXXXXXXXXXXXXXXXX'                                             # 百度云盘授权用户的令牌
 
 # 电子邮件设置（如果需要接收邮件通知，需要提供以下参数）
-SMTP_SERVER=                                                                                    # SMTP服务器地址
-SMTP_PORT=                                                                                      # SMTP服务器端口
+SMTP_SERVER=smtp.gmail.com                                                                      # SMTP服务器地址
+SMTP_PORT=587                                                                                   # SMTP服务器端口
 SMTP_USERNAME=                                                                                  # SMTP用户名/邮箱地址
 SMTP_PASSWORD=                                                                                  # SMTP密码
 SMTP_SENDER=                                                                                    # 发件人名称
