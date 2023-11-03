@@ -45,7 +45,7 @@ echo Moving config.env, configenv, and install.bat to the backup directory...
 move config.env %BACKUP_DIR%
 move configenv %BACKUP_DIR%
 move install.bat %BACKUP_DIR%
-move run_videodownload %BACKUP_DIR%
+move run_videodownload.bat %BACKUP_DIR%
 
 
 :: Check the move operation success
