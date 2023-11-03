@@ -6,7 +6,8 @@
 # /dist/ compiled binaries
 *.env
 *.mp4   
-*.txt   
+*.txt
+*.rtf   
 *.iss   
 gh-actions
 gh-actions.pub
