@@ -1,11 +1,13 @@
 # gitignore v1.0.4
-# 排除文件和目录
-# 20231020 增加排除当前目录下的videos,log,bin,tmp,metadata目录
-# 20231024 增加排除当前目录下的密钥文件：gh-actions,gh-actions.pub文件
+# *.env  # environment variables, *.mp4 downloaded video, *.txt version, Inno Setup
+# *.iss Inno Setup script, gh-actions private key, gh-actions.pub public key, /videos/ downloaded videos
+# /log/ log files, /bin/ compiled binaries, /tmp/ temporary files, /metadata/ metadata files 
+# /.github/ GitHub Actions, __pycache__/ Python cache, *.pyc Python cache, /build/ compiled binaries
+# /dist/ compiled binaries
 *.env
-*.log
-*.mp4
-*.txt
+*.mp4   
+*.txt   
+*.iss   
 gh-actions
 gh-actions.pub
 /videos/
