@@ -30,6 +30,5 @@ exe = EXE(pyz,
           upx_exclude=[],
           runtime_tmpdir=None,
           console=True,
-          icon='cnn10_download.ico'
-           )
+          icon='cnn10_download.ico')
 
