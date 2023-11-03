@@ -5,7 +5,7 @@
 *.env
 *.log
 *.mp4
-version.txt
+*.txt
 gh-actions
 gh-actions.pub
 /videos/
