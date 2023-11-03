@@ -32,7 +32,7 @@ METADATA_DIRECTORY=./metadata                                                   
 MAX_RESOLUTION=720                                                                              # 下载最大尺寸设置
 
 # 百度云盘设置（如需要自动上传百度云盘，需要提供以下参数）
-BAIDU_APPID=xxxxxxx                                                                             # 百度云盘APPID
+BAIDU_APPID=12345678                                                                            # 百度云盘APPID
 BAIDU_APPKEY=XXXXXXXXXXXXXXXXXXX                                                                # 百度云盘APPKEY
 BAIDU_SECRETKEY=XXXXXXXXXXXXXXXXXXXXXXXXXXX                                                     # 百度云盘SECRETKEY
 BAIDU_SIGNKEY=XXXXXXXXXXXXXXXXXXX                                                               # 百度云盘SIGNKEY
@@ -43,10 +43,10 @@ BAIDU_ACCESS_TOKEN='xxx.XXXXXXXXXXXXXXXXXXXXXXXXXX'                             
 # 电子邮件设置（如果需要接收邮件通知，需要提供以下参数）
 SMTP_SERVER=smtp.gmail.com                                                                      # SMTP服务器地址
 SMTP_PORT=587                                                                                   # SMTP服务器端口
-SMTP_USERNAME=                                                                                  # SMTP用户名/邮箱地址
-SMTP_PASSWORD=                                                                                  # SMTP密码
-SMTP_SENDER=                                                                                    # 发件人名称
-SMTP_RECEIVER=                                                                                  # 收件人邮箱地址，多人使用逗号分隔
+SMTP_USERNAME=YOUR NAME                                                                         # SMTP用户名/邮箱地址
+SMTP_PASSWORD=ABCD EFGH IJKL MNOP                                                               # SMTP密码
+SMTP_SENDER=YOUR NAME                                                                           # 发件人名称
+SMTP_RECEIVER=YOURNAME@ABC.COM                                                                  # 收件人邮箱地址，多人使用逗号分隔
 
 # 计划任务设置
 MORNING_RUN_HOUR=8                                                                              # 早晨运行的小时数（24小时制）
