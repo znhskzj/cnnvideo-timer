@@ -52,4 +52,5 @@ if errorlevel 1 (
 echo Installation completed successfully.
 echo You can now run cnn10vd.exe to download videos.
 
+pause
 endlocal
