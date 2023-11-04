@@ -10,6 +10,7 @@
 *.rtf   
 *.iss   
 *.pyc
+*.ps1
 gh-actions
 gh-actions.pub
 /videos/
