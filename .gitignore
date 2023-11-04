@@ -9,6 +9,7 @@
 *.txt
 *.rtf   
 *.iss   
+*.pyc
 gh-actions
 gh-actions.pub
 /videos/
@@ -18,6 +19,6 @@ gh-actions.pub
 /metadata/
 /.github/
 __pycache__/
-*.pyc
 /build/
 /dist/
+/admin/
