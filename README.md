@@ -41,16 +41,20 @@ Please refer to the `CHANGELOG.md` file for a detailed update log.
 ## How to Use
 ### Windows
 #### Method One (Recommended)
-1. Direct Download: https://github.com/znhskzj/cnnvideo-timer/releases/download/v0.9.1/releaseffmpeg.zip
-2. Create a new directory locally, and unzip the file above.
-3. Execute the install.bat script (for Windows 10 and above users, if below Windows 10, install unzip software and refer to Method Two below).
+1. Download directly from https://github.com/znhskzj/cnnvideo-timer/releases/download/v0.9.1/cnn10vd_setup.exe.
+2. Run the exe file downloaded to your local machine, and follow the steps to complete the installation. This will create a program group in the Start menu and a desktop icon (if selected).
 
 #### Method Two
-1. In the repository at https://github.com/znhskzj/cnnvideo-timer, on the release page, download the latest version.
+1. Download directly: https://github.com/znhskzj/cnnvideo-timer/releases/download/v0.9.1/releaseffmpeg.zip.
+2. Create a new directory locally, and extract the above file.
+3. Execute the install.bat script (for Windows 10 or above users, if below Windows 10, you'll need to install extraction software manually and refer to Method 3 below).
+
+#### Method Three
+1. In the repository at https://github.com/znhskzj/cnnvideo-timer, download the latest version from the release page.
 2. If you haven't downloaded ffmpeg.exe before, please download releaseffmpeg.zip.
-3. Unzip to a separate working directory, create a bin subdirectory, place ffmpeg.exe in the subdirectory, and add the directory to the system environment path.
+3. Extract to a separate working directory, create a bin subdirectory, place the ffmpeg.exe in this subdirectory, and add this directory to the system environment path.
 4. Rename configenv to config.env.
-5. Execute cnn10vd.exe file, video files will be downloaded to the video subdirectory of the current directory.
+5. Execute the cnn10vd.exe file, the video files will be downloaded to the video subdirectory in the current directory.
 
 #### Programmers
 1. Please go to https://github.com/znhskzj/cnnvideo-timer to download the source code.
