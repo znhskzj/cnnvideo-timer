@@ -1,9 +1,9 @@
-# requirements.txt version 1.0.0
+# requirements.txt version 1.0.1
 # This file lists the required libraries and their versions for this project. 
 # Use this file to ensure the correct dependencies are installed, especially when setting up the project for the first time or on a new machine.
 
-apscheduler==3.10.4  # Advanced Python Scheduler for job scheduling
-python-dotenv==1.0.0  # Load environment variables from .env file
-requests==2.31.0  # HTTP library for sending requests and handling responses
-yt_dlp==2023.10.7  # Command-line program to download videos from YouTube.com and other video sites
-tqdm==4.66.1  # Progress bar for command-line programs
+apscheduler==3.10.4     # Advanced Python Scheduler for job scheduling
+python-dotenv==1.0.0    # Load environment variables from .env file
+requests==2.31.0        # HTTP library for sending requests and handling responses
+yt_dlp==2023.10.7       # Command-line program to download videos from YouTube.com and other video sites
+tqdm==4.66.1            # Progress bar for command-line programs
