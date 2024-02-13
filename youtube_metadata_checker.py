@@ -13,7 +13,6 @@ import yt_dlp
 from datetime import datetime
 from typing import Optional, Dict
 from config_loader import load_config
-from link_extractor import VideoLinkExtractor
 
 # Create a logger object
 logger = logging.getLogger('youtube_metadata_checker')

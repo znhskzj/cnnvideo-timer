@@ -40,26 +40,13 @@ class YTDownloader:
             output_directory (str, optional): The directory where the videos will be saved. Defaults to config["DOWNLOAD_PATH"].
         """
         self.output_directory = output_directory or config["DOWNLOAD_PATH"]
-        self.setup_youtube_downloader()
-
-    def setup_youtube_downloader(self):
-        """Setup the yt-dlp downloader with necessary options.
-    
-        Args:
-            self (YTDownloader): An instance of YTDownloader.
-
-        Returns:
-            None
-        """
         self.ydl_opts = {
             'format': '18', # Specify the video format code   
-            'outtmpl': os.path.join(self.output_directory, '%(title)s.%(ext)s'),
             'quiet': True,
             'no_progress': True,
             'no_warnings': True,
             'progress_hooks': [self.download_hook],
         }
-        self.ydl = YoutubeDL(self.ydl_opts)
 
     def download_hook(self, d):
         """Hook function to handle download progress.
@@ -85,19 +72,17 @@ class YTDownloader:
             bool: True if the video was downloaded, False if the file already existed.
         """
         clean_title = sanitize_filename(video_info['title'])
-        output_filepath = os.path.join(self.output_directory, f"{clean_title}.mp4")  # Adjust format if necessary
+        output_filepath = os.path.join(self.output_directory, f"{clean_title}.mp4")
 
         if os.path.exists(output_filepath):
-            # Simplified log message
             logger.info(f"'{clean_title}' exists.")
-            return False  # No download performed because file exists
+            return False
         else:
-            self.ydl_opts['outtmpl'] = output_filepath
+            self.ydl_opts['outtmpl'] = os.path.join(self.output_directory, '%(title)s.%(ext)s')
             with YoutubeDL(self.ydl_opts) as ydl:
                 ydl.download([video_info['webpage_url']])
-                # Simplified log message for successful download
                 logger.info(f"'{clean_title}' downloaded.")
-            return True  # Download was performed
+            return True
 
     def get_video_info(self, video_url: str) -> dict:
         """Extract video information without downloading the video.

@@ -4,8 +4,6 @@ CNN Video Timer is a tool designed for scheduling the checking and downloading o
 ## 功能介绍
 CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它能自动提取CNN10的英语新闻Youtube视频链接，下载视频，并且可以配置为定时执行这些任务。下载完成后，它还可以通过电子邮件发送通知。
 
-本项目在计划重构，添加实现更多功能，新项目链接不日将发布。
-
 ## 文件结构（按拼音排序）
 - `.gitignore`：排除文件包括，日志，元数据，下载视频，本地配置，密钥，临时文件等
 - `baidu_cloud_uploader.py`: 百度云上传模块，负责将下载的视频上传到百度云(需设置百度API并获取授权用户的access token)
@@ -17,14 +15,13 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它�
 - `downloader_checker.py`: 下载检查器模块，负责检查和管理视频下载
 - `install.bat`:给windows用户使用的安装脚本，下载完整版本后在windows窗口执行，会创建bin目录，并将ffmege移动到bin目录，添加系统路径
 - `LICENSE.md`: MIT许可证
-- `link_extractor.py`: 链接提取模块，负责从网页提取视频链接
 - `metadata_manager.py`: 元数据管理模块，负责管理视频的元数据
 - `notifier.py`: 通知模块，负责发送下载完成的电子邮件通知（请先在配置文件中设置用户邮箱参数）
 - `README.md`: 本说明
 - `requirements.txt`: 本项目依赖，apscheduler，python-dotenv，requests，yt_dlp，另外ffmpeg.exe需要提前下载在bin目录
 - `scheduler.py`: 调度器模块，负责定时执行下载任务，可在配置文件中设置下载时间，单独执行时使用--test参数为立即执行
 - `utils.py`: 实用工具模块，包含日志设置，目录检查创建和文件名清洗
-- `video_downloader.py`: 视频下载器模块，负责视频的下载
+- `video_precessor.py`: 重构模块，链接提取视频下载模块
 - `bin/`: 存放第三方工具，目前为`ffmpeg.exe`，`ffprobe.exe``ffplay.exe`
 - `log/`: 存放日志文件，日志文件名为video_downloader.log
 - `metadata/`: 存放下载视频的元数据信息，元数据名为metadata.json
