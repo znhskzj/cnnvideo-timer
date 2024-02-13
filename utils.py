@@ -70,21 +70,22 @@ def setup_logging() -> NoReturn:
     console_handler.setFormatter(console_formatter)
     root_logger.addHandler(console_handler)
 
-def create_directories() -> NoReturn:
-    """Check and create necessary directories if they do not exist.
-    This function ensures that the necessary directories such as the download directory are available.
+    # Set the log level for 'urllib3' to WARNING to reduce noise in the log file
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+
+def create_directories(directory_path: str) -> NoReturn:
+    """Check and create the specified directory if it does not exist.20240212
 
     Args:
-    - None
+    - directory_path (str): The path of the directory to create.
 
     Returns:
     - NoReturn: This function does not return anything.
     """
-    download_path = config.get("DOWNLOAD_PATH", "./videos")  # Defaulting to ./videos if not present
-    if not os.path.exists(download_path):
+    if not os.path.exists(directory_path):
         try:
-            os.makedirs(download_path)
-            logger.info(f'Created directory: {download_path}')
+            os.makedirs(directory_path)
+            logger.info(f'Created directory: {directory_path}')
         except OSError as e:
-            logger.error(f"Error creating videos directory: {e}")
+            logger.error(f"Error creating directory at {directory_path}: {e}")
             raise
