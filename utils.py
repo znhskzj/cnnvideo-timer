@@ -89,3 +89,20 @@ def create_directories(directory_path: str) -> NoReturn:
         except OSError as e:
             logger.error(f"Error creating directory at {directory_path}: {e}")
             raise
+
+def extract_video_id(video_url: str) -> str:
+    """
+    Extract the video ID from a YouTube video URL.
+    
+    Args:
+        video_url (str): The URL of the YouTube video.
+    
+    Returns:
+        str: The extracted video ID.
+    """
+    video_id_match = re.search(r'v=([a-zA-Z0-9_-]+)', video_url)
+    if video_id_match:
+        return video_id_match.group(1)
+    else:
+        logger.error(f"Failed to extract video ID from URL: {video_url}")
+        return None

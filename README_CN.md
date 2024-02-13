@@ -12,13 +12,14 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它�
 - `config_loader.py`: 配置加载模块，负责加载和验证环境配置
 - `configenv`: 参考配置文件，需要更名为config.env，并设置相应的参数
 - `deploy.sh`: linux ubuntu一键安装脚本，用于自动部署项目
-- `downloader_checker.py`: 下载检查器模块，负责检查和管理视频下载
+- `download_manager.py`: 重构模块，视频下载、视频元数据管理模块
 - `install.bat`:给windows用户使用的安装脚本，下载完整版本后在windows窗口执行，会创建bin目录，并将ffmege移动到bin目录，添加系统路径
 - `LICENSE.md`: MIT许可证
-- `metadata_manager.py`: 元数据管理模块，负责管理视频的元数据
 - `notifier.py`: 通知模块，负责发送下载完成的电子邮件通知（请先在配置文件中设置用户邮箱参数）
-- `README.md`: 本说明
+- `README_CN.md`: 中文说明
+- `README.md`: 英文说明
 - `requirements.txt`: 本项目依赖，apscheduler，python-dotenv，requests，yt_dlp，另外ffmpeg.exe需要提前下载在bin目录
+- `run_downloader.py`: 重构模块，统一运行入口，提供参数
 - `scheduler.py`: 调度器模块，负责定时执行下载任务，可在配置文件中设置下载时间，单独执行时使用--test参数为立即执行
 - `utils.py`: 实用工具模块，包含日志设置，目录检查创建和文件名清洗
 - `video_precessor.py`: 重构模块，链接提取视频下载模块
@@ -28,7 +29,10 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它�
 - `videos/`: 存放下载的视频文件，各日期的视频文件
 
 ## 更新日志
-请查看 `CHANGELOG.md` 文件以获取详细的更新日志。
+20240212 重构模块，将link_extractor.py和video_downloader.py合并为video_processor.py
+20240213 重构模块，将youtube_metadata_checker.py、downloader_checker.py和metadata_manager.py合并为download_manager.py文件
+20240213 重构模块，创建run_downloader.py文件，统一入口，提供参数选项
+其它请查看 `CHANGELOG.md` 文件以获取详细的更新日志。
 
 ## 依赖
 - Python 3
