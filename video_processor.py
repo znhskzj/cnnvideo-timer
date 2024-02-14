@@ -54,9 +54,12 @@ class YTDownloader:
             d (dict): Dictionary containing information about the download process.
         """
         if d['status'] == 'downloading':
-            logger.info(f"[downloading] {d['_percent_str']} of {d['_total_bytes_str']} at {d['_speed_str']}")
+            percent_str = re.sub(r'[^\d.]+', '', d['_percent_str'])  # 使用正则表达式移除非数字字符
+            percent = float(percent_str) if percent_str else 0.0
+            if percent % 10 == 0:
+                print(f"\rDownloading: {percent}% of {d['_total_bytes_str']} at {d['_speed_str']}", end='')
         elif d['status'] == 'finished':
-            logger.info("Download finished.")
+            print("\nDownload finished.")
 
     def download_video(self, video_info):
         """
@@ -72,13 +75,17 @@ class YTDownloader:
         output_filepath = os.path.join(self.output_directory, f"{clean_title}.mp4")
 
         if os.path.exists(output_filepath):
-            logger.info(f"'{clean_title}' exists. Skipping download.")
-            return False
+            logger.info(f"File '{clean_title}.mp4' already exists. Skipping download.")
+            print(f"File '{clean_title}.mp4' already exists. Skipping download.")  # 直接提示文件已存在，无需下载
+            return False  # 返回 False 表示文件已存在，未执行下载
         else:
             with YoutubeDL(self.ydl_opts) as ydl:
+                # 在开始下载之前打印一条信息
+                print(f"Downloading '{clean_title}.mp4'...")
                 ydl.download([video_info['webpage_url']])
-                logger.info(f"'{clean_title}' downloaded.")
-            return True
+                logger.info(f"'{clean_title}.mp4' downloaded.")
+                print(f"'{clean_title}.mp4' downloaded.")  # 下载完成后打印信息
+            return True  # 返回 True 表示文件已下载
 
     def get_video_info(self, video_url: str):
         """
@@ -90,9 +97,13 @@ class YTDownloader:
         Returns:
             dict: Dictionary containing information about the video, or empty dict if extraction fails.
         """
+        print(f"Attempting to retrieve video info for URL: {video_url}")
         try:
             with YoutubeDL(self.ydl_opts) as ydl:
                 video_info = ydl.extract_info(video_url, download=False)
+                # print(f"Video ID: {video_info.get('id', 'N/A')}")
+                # print(f"Title: {video_info.get('title', 'N/A')}")
+                # print(f"URL: {video_info.get('webpage_url', 'N/A')}")
                 return video_info
         except Exception as e:
             logger.error(f"Failed to extract video information for URL {video_url}: {e}")
@@ -101,33 +112,33 @@ class YTDownloader:
 class VideoLinkExtractor:
     """Class for extracting video links from a webpage."""
     def __init__(self, config):
-        # Store the config settings
         self.config = config
 
-    def extract_video_links_from_page(self, url, timeout=10):
+    def extract_video_links_from_page(self, url, max_links=None):
         """
         Extract video links from the specified webpage.
 
         Args:
             url (str): The URL of the webpage to extract video links from.
-            max_links (int, optional): Maximum number of links to extract. Defaults to 10.
-            video_pattern (str, optional): Regex pattern to match video links. If not provided, defaults to config setting.
-            base_url (str, optional): Base URL to prepend to relative video links. If not provided, defaults to config setting.
-            timeout (int, optional): Timeout for the HTTP request in seconds. Defaults to 10.
+            max_links (int, optional): Maximum number of links to extract.
 
         Returns:
             list: A list of extracted video links.
         """
-        # Extract settings from the config
-        max_links = self.config["MAX_VIDEOS_TO_DOWNLOAD"]
         video_pattern = self.config["YOUTUBE_VIDEO_PATTERN"]
         base_url = self.config["YOUTUBE_BASE_URL"]
+        timeout = self.config.get("REQUEST_TIMEOUT", 10)
+
         try:
             response = requests.get(url, timeout=timeout)
-            response.raise_for_status()  # 对于错误响应抛出 HTTPError
+            response.raise_for_status()  # Raises HTTPError for bad responses
 
             video_links = re.findall(video_pattern, response.text)
-            full_links = [f"{base_url}/watch?v={link}" for link in video_links][:max_links]
+            full_links = [f"{base_url}/watch?v={link}" for link in video_links]
+
+            # Limit the number of links if max_links is provided
+            if max_links is not None:
+                full_links = full_links[:max_links]
 
             return full_links
         except requests.RequestException as e:

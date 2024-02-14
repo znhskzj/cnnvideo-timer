@@ -10,10 +10,9 @@ Merges the functionality of youtube_metadata_checker.py and downloader_checker.p
 """
 import os
 import json
-import time
-import random
 import logging
 from typing import List, Dict, Optional, Any
+from datetime import datetime
 from utils import sanitize_filename
 
 logger = logging.getLogger(__name__)
@@ -57,33 +56,29 @@ class DownloaderManager:
         Returns:
         - None
         """
-        video_path = os.path.join(self.downloader.output_directory, sanitize_filename(video_info['title']) + '.mp4')
+        video_title = video_info.get('title', 'Default Title')  # 从 video_info 获取标题，如果不存在则使用默认标题
+        sanitized_title = sanitize_filename(video_title)  # 使用 utils 中的 sanitize_filename 函数清理标题
+        video_path = os.path.join(self.downloader.output_directory, f"{sanitized_title}.mp4")  # 使用清理过的标题作为文件名
+
         metadata = {
             'id': video_info['id'],
-            'title': video_info['title'],
+            'title': video_title,
             'url': video_info['webpage_url'],
             'description': video_info.get('description', ''),
             'published_at': video_info.get('upload_date', 'Unknown Date'),
             'video_path': video_path,
-            'downloaded_at': time.strftime('%Y-%m-%d %H:%M:%S')
+            'downloaded_at': datetime.now().astimezone().strftime('%Y-%m-%d %H:%M:%S')
         }
         self.metadata_manager.save_or_update_metadata(metadata)
 
     def check_and_download(self) -> List[str]:
-        """Prepare to download videos and return a list of filenames of downloaded videos.
-
-        Args:
-        - None
-                
-        Returns:
-        - List[str] : A list of filenames of the downloaded videos.
-        """
         downloaded_filenames = []
         for video in self.videos:
             video_url = video['webpage_url']
             video_info = self.downloader.get_video_info(video_url)  # 获取视频的完整信息
             if video_info:  # 确保 video_info 不为空
-                video_info['title'] = video.get('title', 'Default Title')  # 如果视频信息中没有标题，使用默认标题
+                # 更新 video_info 中的 title 为实际获取到的标题
+                video_info['title'] = video_info.get('title', 'Default Title')  # 如果视频信息中有标题，使用该标题
                 if self.should_download(video_info):
                     logger.info(f"Downloading: {video_info['title']}")
                     if self.downloader.download_video(video_info):
@@ -95,41 +90,7 @@ class DownloaderManager:
                 else:
                     logger.info(f"Skipping download for '{video_info['title']}' - not required.")
         return downloaded_filenames
-    
-    def _download_single_video(self, video_url: str) -> Optional[str]:
-        """Try downloading a single video and return the title if successful.
-        
-        Args:
-        - video_url : str : URL of the video to be downloaded.
-        
-        Returns:
-        - tuple[Optional[str], Optional[str]] : Tuple containing the title and filename of the downloaded video if successful, None otherwise.
-        """
-        retries = 0
-        max_retries = self.config.get("MAX_DOWNLOAD_RETRIES", 3)
 
-        while retries < max_retries:
-            video_info = self.downloader.get_video_info(video_url)
-            if not video_info:
-                retries += 1
-                time.sleep((retries + 1) * 5 + random.randint(1, 5))
-                continue
-
-            if self.should_download(video_info):
-                logger.info(f"Downloading: {video_info['title']}")
-                if self.downloader.download_video(video_info):
-                    self.store_video_metadata(video_info)
-                    return sanitize_filename(video_info['title']) + self.config["VIDEO_EXTENSION"]
-                else:
-                    logger.info(f"Skipping download for '{video_info['title']}' - already exists.")
-                    return None
-
-            retries += 1
-            time.sleep((retries + 1) * 5 + random.randint(1, 5))
-
-        logger.error(f"Failed to download video from {video_url} after {max_retries} retries.")
-        return None
-        
 class MetadataManager:
     def __init__(self, config: Dict[str, Any]):
         """Initialize the MetadataManager with a configuration dictionary.

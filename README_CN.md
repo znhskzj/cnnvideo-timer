@@ -15,12 +15,11 @@ CNN Video Timer 是一个用于定时检查和下载 CNN 视频的工具。它�
 - `download_manager.py`: 重构模块，视频下载、视频元数据管理模块
 - `install.bat`:给windows用户使用的安装脚本，下载完整版本后在windows窗口执行，会创建bin目录，并将ffmege移动到bin目录，添加系统路径
 - `LICENSE.md`: MIT许可证
-- `notifier.py`: 通知模块，负责发送下载完成的电子邮件通知（请先在配置文件中设置用户邮箱参数）
 - `README_CN.md`: 中文说明
 - `README.md`: 英文说明
 - `requirements.txt`: 本项目依赖，apscheduler，python-dotenv，requests，yt_dlp，另外ffmpeg.exe需要提前下载在bin目录
 - `run_downloader.py`: 重构模块，统一运行入口，提供参数
-- `scheduler.py`: 调度器模块，负责定时执行下载任务，可在配置文件中设置下载时间，单独执行时使用--test参数为立即执行
+- `task_scheduler.py`: 重构模块，负责定时执行下载任务，使用邮件通知
 - `utils.py`: 实用工具模块，包含日志设置，目录检查创建和文件名清洗
 - `video_precessor.py`: 重构模块，链接提取视频下载模块
 - `bin/`: 存放第三方工具，目前为`ffmpeg.exe`，`ffprobe.exe``ffplay.exe`

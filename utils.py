@@ -1,5 +1,5 @@
 """
-utils.py v1.4.1
+utils.py version 0.9.2
 
 This module provides utility functions such as sanitizing filenames and setting up logging configurations.
 These functions are used across multiple modules in the project.
@@ -65,13 +65,15 @@ def setup_logging() -> NoReturn:
     
     # Set up logging for console
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.ERROR)
+    console_handler.setLevel(logging.WARNING)
     console_formatter = logging.Formatter('%(levelname)s: %(message)s')
     console_handler.setFormatter(console_formatter)
     root_logger.addHandler(console_handler)
 
     # Set the log level for 'urllib3' to WARNING to reduce noise in the log file
     logging.getLogger("urllib3").setLevel(logging.WARNING)
+
+    logger.debug(f"Logging setup complete. Log file: {log_file_path}")
 
 def create_directories(directory_path: str) -> NoReturn:
     """Check and create the specified directory if it does not exist.20240212
