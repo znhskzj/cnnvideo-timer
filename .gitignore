@@ -26,3 +26,4 @@ __pycache__/
 /admin/
 /tests/
 /cnnvideo-timer/
+.vscode/
