@@ -8,24 +8,34 @@ downloaded and stored with relevant metadata, avoiding unnecessary re-downloads 
 Merges the functionality of youtube_metadata_checker.py and downloader_checker.py and metadata_manager.py into a single class DownloaderManager.20240212
 
 """
+
 import os
 import json
 import logging
 from typing import List, Dict, Optional, Any
 from datetime import datetime
 from utils import sanitize_filename
+from config import ApplicationConfig
 
 logger = logging.getLogger(__name__)
 
+
 class DownloaderManager:
-    def __init__(self, videos: List[Dict[str, str]], downloader: Any, metadata_manager: 'MetadataManager', config: Dict[str, Any]) -> None:
+    def __init__(
+        self,
+        videos: List[Dict[str, str]],
+        downloader: Any,
+        metadata_manager: "MetadataManager",
+        config: ApplicationConfig,
+    ) -> None:
         """Initialize the DownloaderManager with videos to be downloaded, a downloader, and configuration.
-        
+
         Args:
-        - videos : list : A list of video information to be downloaded.
-        - downloader : YTDownloader : An instance of YTDownloader to perform the actual download.
-        - config : dict : Configuration parameters.
-        
+            videos (List[Dict[str, str]]): A list of video information to be downloaded.
+            downloader (YTDownloader): An instance of YTDownloader to perform the actual download.
+            metadata_manager (MetadataManager): An instance of MetadataManager to handle metadata.
+            config (ApplicationConfig): An instance of the ApplicationConfig class, used to retrieve configuration settings.
+
         Returns:
         - None
         """
@@ -36,17 +46,20 @@ class DownloaderManager:
 
     def should_download(self, video_info: Dict[str, str]) -> bool:
         """Determine if a video should be downloaded based on its title and metadata.
-        
+
         Args:
         - video_info : dict : Information about the video to be downloaded.
-        
+
         Returns:
         - bool : True if the video should be downloaded, False otherwise.
         """
-        sanitized_title = sanitize_filename(video_info['title'])
-        video_path = os.path.join(self.downloader.output_directory, sanitized_title + self.config["VIDEO_EXTENSION"])
+        sanitized_title = sanitize_filename(video_info["title"])
+        video_path = os.path.join(
+            self.downloader.output_directory,
+            sanitized_title + self.config.get("VIDEO_EXTENSION", ".mp4"),
+        )
         return not os.path.exists(video_path)
-    
+
     def store_video_metadata(self, video_info: Dict[str, str]) -> None:
         """Store video metadata using MetadataManager.
 
@@ -56,52 +69,71 @@ class DownloaderManager:
         Returns:
         - None
         """
-        video_title = video_info.get('title', 'Default Title')  # 从 video_info 获取标题，如果不存在则使用默认标题
-        sanitized_title = sanitize_filename(video_title)  # 使用 utils 中的 sanitize_filename 函数清理标题
-        video_path = os.path.join(self.downloader.output_directory, f"{sanitized_title}.mp4")  # 使用清理过的标题作为文件名
+        video_title = video_info.get(
+            "title", "Default Title"
+        )  # from video_info, get the title, or use 'Default Title' if not found
+        sanitized_title = sanitize_filename(
+            video_title
+        )  # use the sanitize_filename function to clean up the title
+        video_path = os.path.join(
+            self.downloader.output_directory, f"{sanitized_title}.mp4"
+        )  # use the sanitized title to create the video path
 
         metadata = {
-            'id': video_info['id'],
-            'title': video_title,
-            'url': video_info['webpage_url'],
-            'description': video_info.get('description', ''),
-            'published_at': video_info.get('upload_date', 'Unknown Date'),
-            'video_path': video_path,
-            'downloaded_at': datetime.now().astimezone().strftime('%Y-%m-%d %H:%M:%S')
+            "id": video_info["id"],
+            "title": video_title,
+            "url": video_info["webpage_url"],
+            "description": video_info.get("description", ""),
+            "published_at": video_info.get("upload_date", "Unknown Date"),
+            "video_path": video_path,
+            "downloaded_at": datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S"),
         }
         self.metadata_manager.save_or_update_metadata(metadata)
 
     def check_and_download(self) -> List[str]:
         downloaded_filenames = []
         for video in self.videos:
-            video_url = video['webpage_url']
-            video_info = self.downloader.get_video_info(video_url)  # 获取视频的完整信息
-            if video_info:  # 确保 video_info 不为空
-                # 更新 video_info 中的 title 为实际获取到的标题
-                video_info['title'] = video_info.get('title', 'Default Title')  # 如果视频信息中有标题，使用该标题
+            video_url = video["webpage_url"]
+            video_info = self.downloader.get_video_info(
+                video_url
+            )  # get video information using the downloader
+            if video_info:  # if video information is available
+                # set the video title to the title from the video information, or use 'Default Title' if not found
+                video_info["title"] = video_info.get("title", "Default Title")
                 if self.should_download(video_info):
                     logger.info(f"Downloading: {video_info['title']}")
                     if self.downloader.download_video(video_info):
                         self.store_video_metadata(video_info)
-                        downloaded_filenames.append(sanitize_filename(video_info['title']) + self.config["VIDEO_EXTENSION"])
-                        logger.info(f"'{sanitize_filename(video_info['title'])}' downloaded.")
+                        downloaded_filenames.append(
+                            sanitize_filename(video_info["title"])
+                            + self.config.get("VIDEO_EXTENSION", ".mp4")
+                        )
+                        logger.info(
+                            f"'{sanitize_filename(video_info['title'])}' downloaded."
+                        )
                     else:
-                        logger.info(f"Skipping download for '{video_info['title']}' - already exists.")
+                        logger.info(
+                            f"Skipping download for '{video_info['title']}' - already exists."
+                        )
                 else:
-                    logger.info(f"Skipping download for '{video_info['title']}' - not required.")
+                    logger.info(
+                        f"Skipping download for '{video_info['title']}' - not required."
+                    )
         return downloaded_filenames
 
+
 class MetadataManager:
-    def __init__(self, config: Dict[str, Any]):
-        """Initialize the MetadataManager with a configuration dictionary.
+    def __init__(self, config: ApplicationConfig):
+        """
+        Initialize the MetadataManager with a configuration instance.
 
         Args:
-        - config (Dict): The configuration dictionary containing settings and parameters.
+            config (ApplicationConfig): The ApplicationConfig instance containing settings and parameters.
 
         Returns:
         - None
         """
-        self.metadata_file_path = config.get('METADATA_FILE', 'metadata.json') 
+        self.metadata_file_path = config.get("METADATA_FILE", "metadata.json")
 
     def save_or_update_metadata(self, metadata: Dict[str, Any]):
         """Save or update the metadata of a video.
@@ -113,7 +145,7 @@ class MetadataManager:
         - None
         """
         all_metadata = self.get_all_metadata()
-        all_metadata[metadata['id']] = metadata
+        all_metadata[metadata["id"]] = metadata
         self._save_metadata(all_metadata)
 
     def get_all_metadata(self) -> Dict[str, Any]:
@@ -123,7 +155,7 @@ class MetadataManager:
         - Dict: A dictionary containing all stored metadata.
         """
         try:
-            with open(self.metadata_file_path, 'r', encoding='utf-8') as file:
+            with open(self.metadata_file_path, "r", encoding="utf-8") as file:
                 return json.load(file)
         except FileNotFoundError:
             return {}
@@ -149,5 +181,5 @@ class MetadataManager:
         - None
         """
         os.makedirs(os.path.dirname(self.metadata_file_path), exist_ok=True)
-        with open(self.metadata_file_path, 'w', encoding='utf-8') as file:
+        with open(self.metadata_file_path, "w", encoding="utf-8") as file:
             json.dump(all_metadata, file, ensure_ascii=False, indent=4)

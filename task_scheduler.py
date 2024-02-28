@@ -10,7 +10,7 @@ import argparse
 import time
 from random import randint
 from typing import List
-from config_loader import load_config
+from config import ApplicationConfig
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
@@ -21,26 +21,29 @@ from email.message import EmailMessage
 from datetime import datetime
 
 # Initialize logger for this module
-logger = logging.getLogger('task_scheduler')
+logger = logging.getLogger("task_scheduler")
+
 
 class Notifier:
-    def __init__(self, config):
+    def __init__(self, config: ApplicationConfig):
         """Initializes Notifier with configuration settings."""
         self.config = config
         self.retry_count = self.config.get("EMAIL_RETRY_COUNT", 3)
-        self.recipients = [email.strip() for email in self.config["SMTP_RECEIVER"].split(',')]
+        self.recipients = [
+            email.strip() for email in self.config。get("SMTP_RECEIVER","").split(",")
+        ]
 
     def send_notification(self, downloaded_videos: List[str]):
         """Sends an email notification about the downloaded videos."""
         message_body = "The following videos have been downloaded:\n\n"
         current_date = datetime.now().strftime("%Y-%m-%d")
-        
+
         for video_path in downloaded_videos:
             video_filename = os.path.basename(video_path)
             video_size = os.path.getsize(video_path)
             video_size_mb = video_size / (1024 * 1024)
             message_body += f"- {video_filename}, Size: {video_size_mb:.2f} MB\n"
-        
+
         subject = f"New Videos Downloaded on {current_date}"
         self._send_email(subject, message_body)
 
@@ -48,18 +51,22 @@ class Notifier:
         """Private method to send an email with the given subject and body."""
         message = EmailMessage()
         message.set_content(body)
-        message['Subject'] = subject
-        message['From'] = self.config["SMTP_SENDER"]
-        message['To'] = ', '.join(self.recipients)
-        
+        message["Subject"] = subject
+        message["From"] = self.config["SMTP_SENDER"]
+        message["To"] = ", ".join(self.recipients)
+
         retries = 0
         while retries < self.retry_count:
             try:
-                with smtplib.SMTP(self.config["SMTP_SERVER"], self.config["SMTP_PORT"]) as server:
+                with smtplib.SMTP(
+                    self.config["SMTP_SERVER"], self.config["SMTP_PORT"]
+                ) as server:
                     server.starttls()
-                    server.login(self.config["SMTP_USERNAME"], self.config["SMTP_PASSWORD"])
+                    server.login(
+                        self.config["SMTP_USERNAME"], self.config["SMTP_PASSWORD"]
+                    )
                     server.send_message(message)
-                
+
                 logger.info(f"Notification email sent successfully.")
                 break
             except smtplib.SMTPException as e:
@@ -67,8 +74,9 @@ class Notifier:
                 retries += 1
                 time.sleep(randint(1, 5))
 
+
 class TaskScheduler:
-    def __init__(self, config, notifier):
+    def __init__(self, config: ApplicationConfig, notifier: Notifier):
         """Initializes TaskScheduler with configuration settings and Notifier instance."""
         self.config = config
         self.notifier = notifier
@@ -88,14 +96,19 @@ class TaskScheduler:
         logger.info("Scheduler started.")
         self.scheduler.start()
 
+
 def main():
     """Main function to parse arguments and start the task scheduler."""
-    config = load_config()
+    config = ApplicationConfig()
     notifier = Notifier(config)
     task_scheduler = TaskScheduler(config, notifier)
 
-    parser = argparse.ArgumentParser(description="Task Scheduler for Video Downloading and Notifications")
-    parser.add_argument('--test', action='store_true', help="Run the job immediately for testing.")
+    parser = argparse.ArgumentParser(
+        description="Task Scheduler for Video Downloading and Notifications"
+    )
+    parser.add_argument(
+        "--test", action="store_true", help="Run the job immediately for testing."
+    )
     args = parser.parse_args()
 
     if args.test:
@@ -104,6 +117,7 @@ def main():
         pass
     else:
         task_scheduler.schedule_jobs()
+
 
 if __name__ == "__main__":
     main()

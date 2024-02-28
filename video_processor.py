@@ -15,14 +15,16 @@ from yt_dlp import YoutubeDL
 
 # Local application imports
 from utils import sanitize_filename
+from config import ApplicationConfig
 
 # Set up a logger for this module
-logger = logging.getLogger('video_processor')
+logger = logging.getLogger("video_processor")
+
 
 class YTDownloader:
     """Class for downloading videos using yt-dlp."""
 
-    def __init__(self, output_directory, video_format='18', download_quiet=True):
+    def __init__(self, output_directory, video_format="18", download_quiet=True):
         """
         Initialize the YTDownloader with the output directory and video format.
 
@@ -39,12 +41,11 @@ class YTDownloader:
     def setup_youtube_downloader(self):
         """Setup yt-dlp downloader with necessary options."""
         self.ydl_opts = {
-            'format': self.video_format,
-            'quiet': self.download_quiet,
-            'progress_hooks': [self.download_hook],
-            'outtmpl': os.path.join(self.output_directory, '%(title)s.%(ext)s')
+            "format": self.video_format,
+            "quiet": self.download_quiet,
+            "progress_hooks": [self.download_hook],
+            "outtmpl": os.path.join(self.output_directory, "%(title)s.%(ext)s"),
         }
-
 
     def download_hook(self, d):
         """
@@ -53,12 +54,17 @@ class YTDownloader:
         Args:
             d (dict): Dictionary containing information about the download process.
         """
-        if d['status'] == 'downloading':
-            percent_str = re.sub(r'[^\d.]+', '', d['_percent_str'])  # 使用正则表达式移除非数字字符
+        if d["status"] == "downloading":
+            percent_str = re.sub(
+                r"[^\d.]+", "", d["_percent_str"]
+            )  # Remove non-numeric characters
             percent = float(percent_str) if percent_str else 0.0
             if percent % 10 == 0:
-                print(f"\rDownloading: {percent}% of {d['_total_bytes_str']} at {d['_speed_str']}", end='')
-        elif d['status'] == 'finished':
+                print(
+                    f"\rDownloading: {percent}% of {d['_total_bytes_str']} at {d['_speed_str']}",
+                    end="",
+                )
+        elif d["status"] == "finished":
             print("\nDownload finished.")
 
     def download_video(self, video_info):
@@ -71,21 +77,25 @@ class YTDownloader:
         Returns:
             bool: True if the video was downloaded, False if the file already existed.
         """
-        clean_title = sanitize_filename(video_info['title'])
+        clean_title = sanitize_filename(video_info["title"])
         output_filepath = os.path.join(self.output_directory, f"{clean_title}.mp4")
 
         if os.path.exists(output_filepath):
             logger.info(f"File '{clean_title}.mp4' already exists. Skipping download.")
-            print(f"File '{clean_title}.mp4' already exists. Skipping download.")  # 直接提示文件已存在，无需下载
-            return False  # 返回 False 表示文件已存在，未执行下载
+            print(
+                f"File '{clean_title}.mp4' already exists. Skipping download."
+            )  # if the file already exists, print a message
+            return False  # return False to indicate that the file was not downloaded
         else:
             with YoutubeDL(self.ydl_opts) as ydl:
-                # 在开始下载之前打印一条信息
+                # Log and print the download message
                 print(f"Downloading '{clean_title}.mp4'...")
-                ydl.download([video_info['webpage_url']])
+                ydl.download([video_info["webpage_url"]])
                 logger.info(f"'{clean_title}.mp4' downloaded.")
-                print(f"'{clean_title}.mp4' downloaded.")  # 下载完成后打印信息
-            return True  # 返回 True 表示文件已下载
+                print(
+                    f"'{clean_title}.mp4' downloaded."
+                )  # print a message to indicate that the file was downloaded
+            return True  # return True to indicate that the file was downloaded
 
     def get_video_info(self, video_url: str):
         """
@@ -106,12 +116,22 @@ class YTDownloader:
                 # print(f"URL: {video_info.get('webpage_url', 'N/A')}")
                 return video_info
         except Exception as e:
-            logger.error(f"Failed to extract video information for URL {video_url}: {e}")
+            logger.error(
+                f"Failed to extract video information for URL {video_url}: {e}"
+            )
             return {}
+
 
 class VideoLinkExtractor:
     """Class for extracting video links from a webpage."""
-    def __init__(self, config):
+
+    def __init__(self, config: ApplicationConfig):
+        """
+        Initialize the VideoLinkExtractor with application configuration.
+
+        Args:
+            config (ApplicationConfig): An instance of the ApplicationConfig class, used to retrieve configuration settings.
+        """
         self.config = config
 
     def extract_video_links_from_page(self, url, max_links=None):
@@ -125,8 +145,8 @@ class VideoLinkExtractor:
         Returns:
             list: A list of extracted video links.
         """
-        video_pattern = self.config["YOUTUBE_VIDEO_PATTERN"]
-        base_url = self.config["YOUTUBE_BASE_URL"]
+        video_pattern = self.config.get("YOUTUBE_VIDEO_PATTERN")
+        base_url = self.config.get("YOUTUBE_BASE_URL")
         timeout = self.config.get("REQUEST_TIMEOUT", 10)
 
         try:

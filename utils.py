@@ -8,101 +8,96 @@ These functions are used across multiple modules in the project.
 import os
 import re
 import logging
-from typing import NoReturn
-from config_loader import load_config
+from typing import Optional
+from config import ApplicationConfig
 
-config = load_config()
-# Setting up a logger for this module
-logger = logging.getLogger(__name__) 
+# Configure a module-level logger
+logger = logging.getLogger(__name__)
+
+
+def setup_logging(config: ApplicationConfig):
+    """
+    Configures the logging system to include both file and console logging.
+
+    This function sets up the logging system with two handlers: one for writing logs to a file, and another for outputting logs to the console. The logging level, format, and destinations are configurable through the ApplicationConfig instance.
+
+    Args:
+        config (ApplicationConfig): An instance of the application configuration, used to retrieve logging configurations.
+
+    Returns:
+        None
+    """
+
+    # Retrieve log directory and filename from the configuration, or use defaults if not set
+    log_directory = config.get("LOG_DIRECTORY", "./log")
+    log_filename = config.get("LOG_FILENAME", "app.log")
+
+    # Ensure the log directory exists, create it if necessary
+    if not os.path.exists(log_directory):
+        os.makedirs(log_directory)
+
+    # Build the full path for the log file
+    log_file_path = os.path.join(log_directory, log_filename)
+
+    # Use basicConfig to set up logging format and add file and console handlers in one go
+    logging.basicConfig(
+        level=config.get(
+            "LOG_LEVEL", "INFO"
+        ),  # Retrieve log level from config, default to INFO
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
+        handlers=[
+            logging.FileHandler(log_file_path),  # File handler for logging to a file
+            logging.StreamHandler(),  # Console handler for logging to stdout
+        ],
+    )
+
 
 def sanitize_filename(filename: str) -> str:
-    """Sanitize the filename by replacing special characters.
+    """
+    Sanitizes the filename by replacing special characters.
 
     Args:
-    - filename (str): The original filename.
-    
+        filename (str): The original filename.
+
     Returns:
-    - str: A sanitized filename with special characters replaced.
+        str: A sanitized filename with special characters replaced.
     """
-    filename = re.sub(r'[<>:"/\\|?*]+', '_', filename)
-    filename = re.sub(r'[^a-zA-Z0-9_.-]+', '_', filename)
-    filename = re.sub(r'_+', '_', filename)
+    filename = re.sub(r'[<>:"/\\|?*]+', "_", filename)
+    filename = re.sub(r"[^a-zA-Z0-9_.-]+", "_", filename)
+    filename = re.sub(r"_+", "_", filename)
     return filename
 
-def setup_logging() -> NoReturn:
-    """Setup the logging system with file and console handlers.
 
-    Args:
-    - None
-    
-    Returns:
-    - NoReturn: This function does not return anything.
+def create_directories(directory_path: str) -> None:
     """
-    log_directory = config.get("LOG_DIRECTORY", "./log")
-    if not os.path.exists(log_directory):
-        try:
-            os.makedirs(log_directory)
-        except OSError as e:
-            logging.error(f"Error creating log directory: {e}")
-            raise
-
-    log_file_path = os.path.join(log_directory, config.get("LOG_FILENAME", "app.log"))
-    
-    # get the root logger
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)  # Set root logger level
-    
-    # Remove all pre-existing handlers
-    for handler in root_logger.handlers[:]:
-        root_logger.removeHandler(handler)
-    
-    # Set up logging for files
-    file_handler = logging.FileHandler(log_file_path)
-    file_handler.setLevel(logging.DEBUG)
-    file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    file_handler.setFormatter(file_formatter)
-    root_logger.addHandler(file_handler)
-    
-    # Set up logging for console
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.WARNING)
-    console_formatter = logging.Formatter('%(levelname)s: %(message)s')
-    console_handler.setFormatter(console_formatter)
-    root_logger.addHandler(console_handler)
-
-    # Set the log level for 'urllib3' to WARNING to reduce noise in the log file
-    logging.getLogger("urllib3").setLevel(logging.WARNING)
-
-    logger.debug(f"Logging setup complete. Log file: {log_file_path}")
-
-def create_directories(directory_path: str) -> NoReturn:
-    """Check and create the specified directory if it does not exist.20240212
+    Checks and creates the specified directory if it does not exist.
 
     Args:
-    - directory_path (str): The path of the directory to create.
+        directory_path (str): The path of the directory to create.
 
     Returns:
-    - NoReturn: This function does not return anything.
+        None
     """
     if not os.path.exists(directory_path):
         try:
             os.makedirs(directory_path)
-            logger.info(f'Created directory: {directory_path}')
+            logger.info(f"Created directory: {directory_path}")
         except OSError as e:
             logger.error(f"Error creating directory at {directory_path}: {e}")
             raise
 
-def extract_video_id(video_url: str) -> str:
+
+def extract_video_id(video_url: str) -> Optional[str]:
     """
-    Extract the video ID from a YouTube video URL.
-    
+    Extracts the video ID from a YouTube video URL.
+
     Args:
         video_url (str): The URL of the YouTube video.
-    
+
     Returns:
-        str: The extracted video ID.
+        Optional[str]: The extracted video ID, or None if extraction fails.
     """
-    video_id_match = re.search(r'v=([a-zA-Z0-9_-]+)', video_url)
+    video_id_match = re.search(r"v=([a-zA-Z0-9_-]+)", video_url)
     if video_id_match:
         return video_id_match.group(1)
     else:
