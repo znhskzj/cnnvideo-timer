@@ -94,31 +94,24 @@ class DownloaderManager:
         downloaded_filenames = []
         for video in self.videos:
             video_url = video["webpage_url"]
-            video_info = self.downloader.get_video_info(
-                video_url
-            )  # get video information using the downloader
-            if video_info:  # if video information is available
-                # set the video title to the title from the video information, or use 'Default Title' if not found
-                video_info["title"] = video_info.get("title", "Default Title")
-                if self.should_download(video_info):
-                    logger.info(f"Downloading: {video_info['title']}")
-                    if self.downloader.download_video(video_info):
-                        self.store_video_metadata(video_info)
-                        downloaded_filenames.append(
-                            sanitize_filename(video_info["title"])
-                            + self.config.get("VIDEO_EXTENSION", ".mp4")
-                        )
-                        logger.info(
-                            f"'{sanitize_filename(video_info['title'])}' downloaded."
-                        )
-                    else:
-                        logger.info(
-                            f"Skipping download for '{video_info['title']}' - already exists."
-                        )
+            video_info = self.downloader.get_video_info(video_url)
+            if video_info and self.should_download(video_info):
+                logger.info(f"Attempting to download: {video_info['title']}")
+                if self.downloader.download_video(video_info):
+                    self.store_video_metadata(video_info)
+                    downloaded_filename = sanitize_filename(
+                        video_info["title"]
+                    ) + self.config.get("VIDEO_EXTENSION", ".mp4")
+                    downloaded_filenames.append(downloaded_filename)
+                    logger.info(f"'{downloaded_filename}' downloaded successfully.")
                 else:
                     logger.info(
-                        f"Skipping download for '{video_info['title']}' - not required."
+                        f"Skipping download for '{video_info['title']}' - file already exists."
                     )
+            else:
+                logger.info(
+                    f"Skipping download for '{video_info['title']}' - not required or already exists."
+                )
         return downloaded_filenames
 
 

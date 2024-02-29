@@ -82,19 +82,19 @@ class YTDownloader:
 
         if os.path.exists(output_filepath):
             logger.info(f"File '{clean_title}.mp4' already exists. Skipping download.")
-            print(
-                f"File '{clean_title}.mp4' already exists. Skipping download."
-            )  # if the file already exists, print a message
+            # print(
+            # f"File '{clean_title}.mp4' already exists. Skipping download."
+            # )  # if the file already exists, print a message
             return False  # return False to indicate that the file was not downloaded
         else:
             with YoutubeDL(self.ydl_opts) as ydl:
                 # Log and print the download message
-                print(f"Downloading '{clean_title}.mp4'...")
+                # print(f"Downloading '{clean_title}.mp4'...")
                 ydl.download([video_info["webpage_url"]])
                 logger.info(f"'{clean_title}.mp4' downloaded.")
-                print(
-                    f"'{clean_title}.mp4' downloaded."
-                )  # print a message to indicate that the file was downloaded
+                # print(
+                # f"'{clean_title}.mp4' downloaded."
+                # )  # print a message to indicate that the file was downloaded
             return True  # return True to indicate that the file was downloaded
 
     def get_video_info(self, video_url: str):
@@ -147,7 +147,7 @@ class VideoLinkExtractor:
         """
         video_pattern = self.config.get("YOUTUBE_VIDEO_PATTERN")
         base_url = self.config.get("YOUTUBE_BASE_URL")
-        timeout = self.config.get("REQUEST_TIMEOUT", 10)
+        timeout = int(self.config.get("REQUEST_TIMEOUT", 10))
 
         try:
             response = requests.get(url, timeout=timeout)

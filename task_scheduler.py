@@ -30,7 +30,7 @@ class Notifier:
         self.config = config
         self.retry_count = self.config.get("EMAIL_RETRY_COUNT", 3)
         self.recipients = [
-            email.strip() for email in self.config。get("SMTP_RECEIVER","").split(",")
+            email.strip() for email in self.config.get("SMTP_RECEIVER", "").split(",")
         ]
 
     def send_notification(self, downloaded_videos: List[str]):

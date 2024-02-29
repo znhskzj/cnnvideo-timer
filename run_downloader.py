@@ -11,6 +11,7 @@ from video_processor import YTDownloader, VideoLinkExtractor
 from config import ApplicationConfig
 from task_scheduler import TaskScheduler, Notifier
 from utils import setup_logging
+import logging
 
 
 def run_downloader(video_format, max_videos, video_url, config: ApplicationConfig):
@@ -23,6 +24,7 @@ def run_downloader(video_format, max_videos, video_url, config: ApplicationConfi
         video_url (str): The URL of the webpage where the videos are located.
         config (ApplicationConfig): An instance of ApplicationConfig for accessing configuration settings.
     """
+    logger = logging.getLogger(__name__)
     # Initialize downloader, metadata manager, and video link extractor with the ApplicationConfig instance
     downloader = YTDownloader(
         output_directory=config.get("DOWNLOAD_PATH"), video_format=video_format
@@ -30,6 +32,7 @@ def run_downloader(video_format, max_videos, video_url, config: ApplicationConfi
     metadata_manager = MetadataManager(config=config)
     extractor = VideoLinkExtractor(config)
 
+    logger.info(f"Downloading videos from {video_url}...")
     # Extract video links and prepare video information, then manage downloading and metadata
     video_links = extractor.extract_video_links_from_page(
         video_url, max_links=max_videos
@@ -43,8 +46,12 @@ def run_downloader(video_format, max_videos, video_url, config: ApplicationConfi
     )
     downloaded_videos = downloader_manager.check_and_download()
 
-    # Print the number of successfully downloaded videos
-    print(f"Downloaded videos: {len(downloaded_videos)}")
+    if not downloaded_videos:
+        logger.info(
+            "No new videos were downloaded. All videos might already exist."
+        )  # 使用logger记录
+    else:
+        logger.info(f"Downloaded {len(downloaded_videos)} video(s).")
 
 
 def main():
